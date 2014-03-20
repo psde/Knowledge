@@ -1,19 +1,19 @@
 # global definitions
 set(LOCAL_EXTRA_C_FLAGS "")
 
+find_package(Threads)
+
 message(STATUS "-+---------------------------------------------")
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     message(STATUS " | Detected GNUCXX")
     set(LOCAL_EXTRA_C_FLAGS "${LOCAL_EXTRA_C_FLAGS} -Wall -Wextra -std=c++11 -pedantic -g")
-	list(APPEND CMAKE_CXX_FLAGS "-pthread")
 elseif(MSVC)
     message(STATUS " | Detected MSVC")
     add_definitions("-D_CRT_SECURE_NO_WARNINGS")
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     message(STATUS " | Detected Clang++")
     set(LOCAL_EXTRA_C_FLAGS "${LOCAL_EXTRA_C_FLAGS} -Wall -Wextra -Wno-c++98-compat -std=c++11 -pedantic")
-	list(APPEND CMAKE_CXX_FLAGS "-pthread")
 else()
     message(STATUS " | Unknown Compiler")
 endif()

@@ -12,3 +12,4 @@ set(CORE_HDRS
 )
 
 add_executable(core ${CORE_SRCS} ${CORE_HDRS})
+target_link_libraries(core ${CMAKE_THREAD_LIBS_INIT})
