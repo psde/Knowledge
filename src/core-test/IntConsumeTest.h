@@ -1,12 +1,12 @@
 #pragma once
 
-#include <core/Data.h>
+#include <core/IData.h>
 #include <core/IProducer.h>
 #include <core/IConsumer.h>
 #include <core/DequePool.h>
 
 // IntData
-class IntData : public Data
+class IntData : public IData
 {
 private:
 	int _i;
@@ -41,7 +41,7 @@ public:
 	}
 };
 
-class IntDataFactory : public DataFactory
+class IntDataFactory : public IDataFactory
 {
 public:
 	IntData* createData()
@@ -55,7 +55,7 @@ class Int42Producer : public IProducer
 {
 public:
 	Int42Producer()
-	: IProducer(new DequePool(10, std::shared_ptr<DataFactory>(new IntDataFactory())))
+	: IProducer(new DequePool(10, std::shared_ptr<IDataFactory>(new IntDataFactory())))
 	{
 	}
 
@@ -63,11 +63,11 @@ public:
 	{
 		while (true)
 		{
-			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, Data>(_buffer->deque());
+			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, IData>(_buffer->deque());
 			intData->setInt(42);
 			std::cout << this << " producing " << intData->getInt() << std::endl;
 			_buffer->enque(std::move(intData));
-			std::this_thread::sleep_for(std::chrono::milliseconds(150));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 	}
 };
@@ -79,7 +79,7 @@ private:
 
 public:
 	MultiplyIntBy2(std::shared_ptr<IProducer> producer)
-	: IProducer(new DequePool(10, std::shared_ptr<DataFactory>(new IntDataFactory())))
+	: IProducer(new DequePool(10, std::shared_ptr<IDataFactory>(new IntDataFactory())))
 	, _producer(producer)
 	{
 
@@ -89,11 +89,11 @@ public:
 	{
 		while (true)
 		{
-			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, Data>(_producer->getBuffer()->get());
+			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, IData>(_producer->getBuffer()->get());
 			int i = intData->getInt();
 			_producer->getBuffer()->recycle(std::move(intData));
 
-			std::unique_ptr<IntData> intData2 = static_unique_ptr_cast<IntData, Data>(_buffer->deque());
+			std::unique_ptr<IntData> intData2 = static_unique_ptr_cast<IntData, IData>(_buffer->deque());
 			intData2->setInt(i);
 			std::cout << this << " producing multiplied " << intData2->getInt() << std::endl;
 			_buffer->enque(std::move(intData2));
@@ -116,10 +116,10 @@ public:
 	{
 		while (true)
 		{
-			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, Data>(_producer->getBuffer()->get());
+			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, IData>(_producer->getBuffer()->get());
 			std::cout << this << " consumed " << intData->getInt() << std::endl;
 			_producer->getBuffer()->recycle(std::move(intData));
-			std::this_thread::sleep_for(std::chrono::milliseconds(200));
+			std::this_thread::sleep_for(std::chrono::milliseconds(2));
 		}
 	}
 

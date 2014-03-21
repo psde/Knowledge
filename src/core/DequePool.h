@@ -6,26 +6,28 @@
 #include <vector>
 #include <memory>
 
-#include "Data.h"
+#include "IData.h"
 
 class DequePool
 {
 private:
-	std::vector<std::unique_ptr<Data> > _pool;
-	std::deque<std::unique_ptr<Data> > _deque;
+	std::vector<std::unique_ptr<IData> > _pool;
+	std::deque<std::unique_ptr<IData> > _deque;
 	std::mutex _readMutex;
 	std::mutex _writeMutex;
 
-	std::shared_ptr<DataFactory> _factory;
+	std::shared_ptr<IDataFactory> _factory;
 
 	unsigned int _maxQueueSize;
 	
+	void trim();
+
 public:
-	DequePool(unsigned int maxQueueSize, std::shared_ptr<DataFactory> factory);
+	DequePool(unsigned int maxQueueSize, std::shared_ptr<IDataFactory> factory);
 
-	void enque(std::unique_ptr<Data> data);
-	std::unique_ptr<Data> deque();
+	void enque(std::unique_ptr<IData> data);
+	std::unique_ptr<IData> deque();
 
-	void recycle(std::unique_ptr<Data> data);
-	std::unique_ptr<Data> get();
+	void recycle(std::unique_ptr<IData> data);
+	std::unique_ptr<IData> get();
 };

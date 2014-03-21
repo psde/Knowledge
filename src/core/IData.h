@@ -19,20 +19,20 @@ std::unique_ptr<Derived> dynamic_unique_ptr_cast(std::unique_ptr<Base>&& p)
 	return std::unique_ptr<Derived>(nullptr);
 }
 
-class Data
+class IData
 {
 public:
-	Data();
-	Data(const Data& other);
-	Data(Data&& other);
+	IData();
+	IData(const IData& other);
+	IData(IData&& other);
 
 	//Data& operator= (const Data&) {};
 	//Data& operator= (Data&&){}
-	virtual ~Data() { }
+	virtual ~IData() { }
 };
 
-class DataFactory
+class IDataFactory
 {
 public:
-	virtual Data* createData() = 0;
+	virtual IData* createData() = 0;
 };
