@@ -18,12 +18,12 @@ private:
 
 	std::shared_ptr<IDataFactory> _factory;
 
-	unsigned int _maxQueueSize;
+	size_t _maxQueueSize;
 	
 	void trim();
 
 public:
-	DequePool(unsigned int maxQueueSize, std::shared_ptr<IDataFactory> factory);
+	DequePool(size_t maxQueueSize, std::shared_ptr<IDataFactory> factory);
 
 	void enque(std::unique_ptr<IData> data);
 	std::unique_ptr<IData> deque();

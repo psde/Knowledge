@@ -2,7 +2,7 @@
 #include "IData.h"
 #include "DequePool.h"
 
-DequePool::DequePool(unsigned int maxQueueSize, std::shared_ptr<IDataFactory> factory)
+DequePool::DequePool(size_t maxQueueSize, std::shared_ptr<IDataFactory> factory)
 : _maxQueueSize(maxQueueSize)
 , _factory(factory)
 {
@@ -11,6 +11,9 @@ DequePool::DequePool(unsigned int maxQueueSize, std::shared_ptr<IDataFactory> fa
 
 void DequePool::trim()
 {
+	if (_maxQueueSize <= 0)
+		return;
+
 	while (_deque.size() > _maxQueueSize)
 	{
 		std::cout << "Too much elements, poping front" << std::endl;
