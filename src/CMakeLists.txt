@@ -1,7 +1,6 @@
 # global definitions
 set(LOCAL_EXTRA_C_FLAGS "")
 
-find_package(Threads)
 
 message(STATUS "-+---------------------------------------------")
 

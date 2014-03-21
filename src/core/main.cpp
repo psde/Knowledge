@@ -6,13 +6,13 @@
 
 int main()
 {
-	std::shared_ptr<DequeBuffer> foo(new DequeBuffer());
+	std::shared_ptr<Producer> producer(new Producer());
 
-	std::thread t0(&Consumer::run, new Consumer(foo));
-	std::thread t1(&Consumer::run, new Consumer(foo));
-	std::thread t2(&Producer::run, new Producer(foo));
-	t2.join();
-	t1.join();
+	std::thread t0(&Producer::run, producer);
+	std::thread t1(&Consumer::run, new Consumer(producer));
+	std::thread t2(&Consumer::run, new Consumer(producer));
+
+	t0.join();
 
 	return 0;
 }

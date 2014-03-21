@@ -1,3 +1,4 @@
+#include "Data.h"
 #include "DequeBuffer.h"
 
 DequeBuffer::DequeBuffer()
@@ -5,13 +6,13 @@ DequeBuffer::DequeBuffer()
 
 }
 
-void DequeBuffer::add(int i)
+void DequeBuffer::add(std::unique_ptr<Data> i)
 {
 	std::lock_guard<std::mutex> guard(_writeMutex);
-	_deque.push_back(i);
+	_deque.push_back(std::move(i));
 }
 
-int DequeBuffer::get()
+std::unique_ptr<Data> DequeBuffer::get()
 {
 	std::lock_guard<std::mutex> guard(_readMutex);
 
@@ -22,7 +23,7 @@ int DequeBuffer::get()
 			break;
 	}
 
-	int i = _deque.front();
+	auto data = std::move(_deque.front());
 	_deque.pop_front();
-	return i;
+	return std::move(data);
 }

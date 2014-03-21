@@ -2,14 +2,14 @@
 
 #include <memory>
 
-class DequeBuffer;
+class Producer;
 
 class Consumer
 {
 private:
-	std::shared_ptr<DequeBuffer> _foo;
+	std::shared_ptr<Producer> _producer;
 public:
-	Consumer(std::shared_ptr<DequeBuffer> foo);
+	Consumer(std::shared_ptr<Producer> producer);
 
 	void run();
 };
