@@ -16,6 +16,6 @@ void Consumer::run()
 		Data* i = _producer->getBuffer()->get().release();
 		IntData* test = dynamic_cast<IntData*>(i);
 		std::cout << this << " consumed " << test->getInt() << std::endl;
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }	
