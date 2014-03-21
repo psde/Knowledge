@@ -1,7 +1,11 @@
 # global definitions
 set(LOCAL_EXTRA_C_FLAGS "")
 
+#set(OpenCV_STATIC ON)
+#set(OpenCV_SHARED ON)
+
 find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 message(STATUS "-+---------------------------------------------")
 
@@ -32,3 +36,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/core")
 
 # core-test
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/core-test")
+
+# opencv-test
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/opencv-test")
