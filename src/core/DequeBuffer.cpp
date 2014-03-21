@@ -1,7 +1,9 @@
+#include <iostream>
 #include "Data.h"
 #include "DequeBuffer.h"
 
-DequeBuffer::DequeBuffer()
+DequeBuffer::DequeBuffer(unsigned int maxQueueSize)
+: _maxQueueSize(maxQueueSize)
 {
 
 }
@@ -10,6 +12,12 @@ void DequeBuffer::add(std::unique_ptr<Data> i)
 {
 	std::lock_guard<std::mutex> guard(_writeMutex);
 	_deque.push_back(std::move(i));
+
+	while (_deque.size() > _maxQueueSize)
+	{
+		std::cout << "Too much elements, poping front" << std::endl;
+		_deque.pop_front();
+	}
 }
 
 std::unique_ptr<Data> DequeBuffer::get()

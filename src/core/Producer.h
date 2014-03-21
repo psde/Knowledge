@@ -4,14 +4,29 @@
 
 class DequeBuffer;
 
-class Producer
+class IProducer
 {
-private:
+protected:
 	std::shared_ptr<DequeBuffer> _buffer;
+
+public:
+	IProducer(DequeBuffer* buffer)
+	: _buffer(buffer)
+	{ 
+	}
+
+	std::shared_ptr<DequeBuffer> getBuffer()
+	{
+		return _buffer;
+	}
+
+	virtual void run() = 0;
+};
+
+class Producer : public IProducer
+{
 public:
 	Producer();
-
-	std::shared_ptr<DequeBuffer> getBuffer();
-
+	
 	void run();
 };
