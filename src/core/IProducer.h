@@ -2,20 +2,20 @@
 
 #include <memory>
 
-class DequeBuffer;
+class DequePool;
 
 class IProducer
 {
 protected:
-	std::shared_ptr<DequeBuffer> _buffer;
+	std::shared_ptr<DequePool> _buffer;
 
 public:
-	IProducer(DequeBuffer* buffer)
+	IProducer(DequePool* buffer)
 	: _buffer(buffer)
 	{ 
 	}
 
-	std::shared_ptr<DequeBuffer> getBuffer()
+	std::shared_ptr<DequePool> getBuffer()
 	{
 		return _buffer;
 	}

@@ -8,7 +8,7 @@
 
 #include "Data.h"
 
-class DequeBuffer
+class DequePool
 {
 private:
 	std::vector<std::unique_ptr<Data> > _pool;
@@ -16,12 +16,16 @@ private:
 	std::mutex _readMutex;
 	std::mutex _writeMutex;
 
+	std::shared_ptr<DataFactory> _factory;
+
 	unsigned int _maxQueueSize;
 	
 public:
-	DequeBuffer(unsigned int maxQueueSize);
+	DequePool(unsigned int maxQueueSize, std::shared_ptr<DataFactory> factory);
 
-	void add(std::unique_ptr<Data> i);
+	void enque(std::unique_ptr<Data> data);
+	std::unique_ptr<Data> deque();
 
+	void recycle(std::unique_ptr<Data> data);
 	std::unique_ptr<Data> get();
 };
