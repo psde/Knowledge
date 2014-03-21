@@ -55,7 +55,7 @@ class Int42Producer : public IProducer
 {
 public:
 	Int42Producer()
-	: IProducer(new DequePool(10, std::shared_ptr<IDataFactory>(new IntDataFactory())))
+	: IProducer(10, std::shared_ptr<IDataFactory>(new IntDataFactory()))
 	{
 	}
 
@@ -79,7 +79,7 @@ private:
 
 public:
 	MultiplyIntBy2(std::shared_ptr<IProducer> producer)
-	: IProducer(new DequePool(10, std::shared_ptr<IDataFactory>(new IntDataFactory())))
+	: IProducer(10, std::shared_ptr<IDataFactory>(new IntDataFactory()))
 	, _producer(producer)
 	{
 
@@ -94,13 +94,46 @@ public:
 			_producer->getBuffer()->recycle(std::move(intData));
 
 			std::unique_ptr<IntData> intData2 = static_unique_ptr_cast<IntData, IData>(_buffer->deque());
-			intData2->setInt(i);
+			intData2->setInt(i * 2);
 			std::cout << this << " producing multiplied " << intData2->getInt() << std::endl;
 			_buffer->enque(std::move(intData2));
 		}
 	}
 };
 
+class AddTwoInts : public IConsumer, public IProducer
+{
+private:
+	std::shared_ptr<IProducer> _producer1, _producer2;
+
+public:
+	AddTwoInts(std::shared_ptr<IProducer> producer1, std::shared_ptr<IProducer> producer2)
+	: IProducer(10, std::shared_ptr<IDataFactory>(new IntDataFactory()))
+	, _producer1(producer1)
+	, _producer2(producer2)
+	{
+
+	}
+
+	void run()
+	{
+		while (true)
+		{
+			std::unique_ptr<IntData> intData1 = static_unique_ptr_cast<IntData, IData>(_producer1->getBuffer()->get());
+			int i1 = intData1->getInt();
+			_producer1->getBuffer()->recycle(std::move(intData1));
+
+			std::unique_ptr<IntData> intData2 = static_unique_ptr_cast<IntData, IData>(_producer2->getBuffer()->get());
+			int i2 = intData2->getInt();
+			_producer2->getBuffer()->recycle(std::move(intData2));
+
+			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, IData>(_buffer->deque());
+			intData->setInt(i1 + i2);
+			std::cout << this << " adding " << i1 << " and " << i2 << ": " << intData->getInt() << std::endl;
+			_buffer->enque(std::move(intData));
+		}
+	}
+};
 
 class IntConsumer : public IConsumer
 {
@@ -122,5 +155,4 @@ public:
 			std::this_thread::sleep_for(std::chrono::milliseconds(2));
 		}
 	}
-
 };

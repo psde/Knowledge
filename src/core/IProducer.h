@@ -10,15 +10,9 @@ protected:
 	std::shared_ptr<DequePool> _buffer;
 
 public:
-	IProducer(DequePool* buffer)
-	: _buffer(buffer)
-	{ 
-	}
+	IProducer(unsigned int maxQueueSize, std::shared_ptr<IDataFactory> factory);
 
-	std::shared_ptr<DequePool> getBuffer()
-	{
-		return _buffer;
-	}
+	std::shared_ptr<DequePool> getBuffer();
 
 	virtual void run() = 0;
 };
