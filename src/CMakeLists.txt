@@ -21,8 +21,13 @@ message(STATUS " | compiler flags: ${LOCAL_EXTRA_C_FLAGS} ${EXTRA_C_FLAGS}")
 message(STATUS "-+---------------------------------------------")
 add_definitions("${LOCAL_EXTRA_C_FLAGS}")
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib CACHE PATH "Output directory for libraries" )
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin CACHE PATH "Output directory for applications" )
 
 # core
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/core")
+
+# core-test
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/core-test")

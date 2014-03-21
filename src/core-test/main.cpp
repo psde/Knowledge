@@ -1,8 +1,8 @@
 #include <thread>
 
-#include "Producer.h"
-#include "Consumer.h"
-#include "DequeBuffer.h"
+#include <core/Producer.h>
+#include <core/Consumer.h>
+#include <core/DequeBuffer.h>
 
 int main()
 {
