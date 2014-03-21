@@ -1,6 +1,7 @@
 # global definitions
 set(LOCAL_EXTRA_C_FLAGS "")
 
+find_package(OpenCV REQUIRED)
 
 message(STATUS "-+---------------------------------------------")
 

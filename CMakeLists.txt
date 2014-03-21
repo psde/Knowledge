@@ -4,5 +4,8 @@ cmake_minimum_required(VERSION 2.8)
 set(APPLICATION_VERSION "0.0.1")
 set(APPLICATION_NAME ${PROJECT_NAME})
 
+# User config
+include("UserDefinitions.cmake" OPTIONAL)
+
 # sources
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src")

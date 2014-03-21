@@ -1,0 +1,2 @@
+# Set opencv directory
+set(OpenCV_DIR "~/devel/opencv/")
