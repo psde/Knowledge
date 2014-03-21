@@ -22,11 +22,3 @@ public:
 
 	virtual void run() = 0;
 };
-
-class Producer : public IProducer
-{
-public:
-	Producer();
-	
-	void run();
-};

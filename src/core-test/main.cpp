@@ -1,18 +1,16 @@
 #include <thread>
 
-#include <core/Producer.h>
-#include <core/Consumer.h>
-#include <core/DequeBuffer.h>
+#include "IntConsumeTest.h"
 
 int main()
 {
-	std::shared_ptr<Producer> producer(new Producer());
-	std::shared_ptr<ConsumerProducer> consumerProducer(new ConsumerProducer(producer));
-	std::shared_ptr<Consumer> consumer(new Consumer(consumerProducer));
+	std::shared_ptr<Int42Producer> producer(new Int42Producer());
+	std::shared_ptr<IntMultiplier> consumerProducer(new IntMultiplier(producer));
+	std::shared_ptr<IntConsumer> consumer(new IntConsumer(consumerProducer));
 
-	std::thread t0(&Producer::run, producer);
-	std::thread t1(&ConsumerProducer::run, consumerProducer);
-	std::thread t2(&Consumer::run, consumer);
+	std::thread t0(&Int42Producer::run, producer);
+	std::thread t1(&IntMultiplier::run, consumerProducer);
+	std::thread t2(&IntConsumer::run, consumer);
 
 	t0.join();
 

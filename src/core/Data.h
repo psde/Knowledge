@@ -11,20 +11,3 @@ public:
 	//Data& operator= (Data&&){}
 	virtual ~Data() { }
 };
-
-class IntData : public Data
-{
-private:
-	int _i;
-
-public:
-	IntData();
-	IntData(int i);
-	IntData(const IntData& other);
-	IntData(IntData&& other);
-
-	int getInt()
-	{
-		return _i;
-	}
-};

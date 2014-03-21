@@ -1,13 +1,13 @@
 set(CORE_SRCS
-    Consumer.cpp
-    Producer.cpp
+    IConsumer.cpp
+    IProducer.cpp
     DequeBuffer.cpp
     Data.cpp
 )
 
 set(CORE_HDRS
-    Consumer.h
-    Producer.h
+    IConsumer.h
+    IProducer.h
     DequeBuffer.h
     Data.h
 )
