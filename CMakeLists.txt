@@ -14,7 +14,7 @@ set(LOCAL_EXTRA_C_FLAGS "")
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-# Compiler and plattform specific stuff
+# Compiler stuff
 message(STATUS "-+---------------------------------------------")
 if(CMAKE_COMPILER_IS_GNUCXX)
     message(STATUS " | Detected GNUCXX")
@@ -42,4 +42,11 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin CACHE PATH "Output directory 
 # sources
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-#${_OpenCV_LIB_PATH}
+if(WIN32)
+  file(TO_NATIVE_PATH "${_OpenCV_LIB_PATH}" ENV_EXPORT_OpenCV_PATH)
+  file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/lib" ENV_EXPORT_LIB_PATH)
+  file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/bin" ENV_EXPORT_BIN_PATH)
+
+  configure_file("${PROJECT_SOURCE_DIR}/script/env.bat.in" "${CMAKE_BINARY_DIR}/env.bat")
+  configure_file("${PROJECT_SOURCE_DIR}/script/copy_opencv_dlls.bat.in" "${CMAKE_BINARY_DIR}/copy_opencv_dlls.bat")
+endif()
