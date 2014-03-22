@@ -14,6 +14,9 @@ set(LOCAL_EXTRA_C_FLAGS "")
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+# pthreads
+find_package(Threads)
+
 # Compiler stuff
 message(STATUS "-+---------------------------------------------")
 if(CMAKE_COMPILER_IS_GNUCXX)
@@ -32,8 +35,6 @@ endif()
 message(STATUS " | compiler flags: ${LOCAL_EXTRA_C_FLAGS} ${EXTRA_C_FLAGS}")
 message(STATUS "-+---------------------------------------------")
 add_definitions("${LOCAL_EXTRA_C_FLAGS}")
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Set output paths
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib CACHE PATH "Output directory for libraries" )
