@@ -16,9 +16,8 @@ private:
 	std::mutex _readMutex;
 	std::mutex _writeMutex;
 
-	std::shared_ptr<IDataFactory> _factory;
-
 	size_t _maxQueueSize;
+	std::shared_ptr<IDataFactory> _factory;
 	
 	void trim();
 

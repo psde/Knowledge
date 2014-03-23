@@ -21,6 +21,7 @@ public:
 	{}
 
 	IntData(const IntData& other)
+	: IData()
 	{
 		_i = other._i;
 	}
