@@ -6,7 +6,7 @@
 #include <core/DequePool.h>
 
 // IntData
-class IntData : public IData
+class IntData
 {
 private:
 	int _i;
@@ -21,7 +21,6 @@ public:
 	{}
 
 	IntData(const IntData& other)
-	: IData()
 	{
 		_i = other._i;
 	}
@@ -42,21 +41,11 @@ public:
 	}
 };
 
-class IntDataFactory : public IDataFactory
-{
-public:
-	IntData* createData()
-	{
-		return new IntData();
-	}
-};
-
-
-class Int42Producer : public IProducer
+class Int42Producer : public IProducer<IntData>
 {
 public:
 	Int42Producer()
-	: IProducer(10, std::shared_ptr<IDataFactory>(new IntDataFactory()))
+	: IProducer<IntData>(10)
 	{
 	}
 
@@ -64,7 +53,7 @@ public:
 	{
 		while (true)
 		{
-			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, IData>(_buffer->deque());
+			std::unique_ptr<IntData> intData = _buffer->deque();
 			intData->setInt(42);
 			std::cout << this << " producing " << intData->getInt() << std::endl;
 			_buffer->enque(std::move(intData));
@@ -73,28 +62,25 @@ public:
 	}
 };
 
-class MultiplyIntBy2 : public IConsumer, public IProducer
+
+class MultiplyIntBy2 : public IConsumer<IntData>, public IProducer<IntData>
 {
-private:
-	std::shared_ptr<IProducer> _producer;
-
 public:
-	MultiplyIntBy2(std::shared_ptr<IProducer> producer)
-	: IProducer(10, std::shared_ptr<IDataFactory>(new IntDataFactory()))
-	, _producer(producer)
+	MultiplyIntBy2(std::shared_ptr<IProducer<IntData> > producer)
+	: IConsumer<IntData>(producer)
+	, IProducer<IntData>(10)
 	{
-
 	}
 
 	void run()
 	{
 		while (true)
 		{
-			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, IData>(_producer->getBuffer()->get());
+			std::unique_ptr<IntData> intData = getData();
 			int i = intData->getInt();
-			_producer->getBuffer()->recycle(std::move(intData));
+			recycleData(std::move(intData));
 
-			std::unique_ptr<IntData> intData2 = static_unique_ptr_cast<IntData, IData>(_buffer->deque());
+			std::unique_ptr<IntData> intData2 = _buffer->deque();
 			intData2->setInt(i * 2);
 			std::cout << this << " producing multiplied " << intData2->getInt() << std::endl;
 			_buffer->enque(std::move(intData2));
@@ -102,33 +88,32 @@ public:
 	}
 };
 
-class AddTwoInts : public IConsumer, public IProducer
+class AddTwoInts : public IProducer<IntData>
 {
 private:
-	std::shared_ptr<IProducer> _producer1, _producer2;
+	std::shared_ptr<IConsumer<IntData> > _consumer1, _consumer2;
 
 public:
-	AddTwoInts(std::shared_ptr<IProducer> producer1, std::shared_ptr<IProducer> producer2)
-	: IProducer(10, std::shared_ptr<IDataFactory>(new IntDataFactory()))
-	, _producer1(producer1)
-	, _producer2(producer2)
+	AddTwoInts(std::shared_ptr<IProducer<IntData> > producer1, std::shared_ptr<IProducer<IntData> > producer2)
+	: IProducer<IntData>(10)
+	, _consumer1(new IConsumer<IntData>(producer1))
+	, _consumer2(new IConsumer<IntData>(producer2))
 	{
-
 	}
 
 	void run()
 	{
 		while (true)
 		{
-			std::unique_ptr<IntData> intData1 = static_unique_ptr_cast<IntData, IData>(_producer1->getBuffer()->get());
+			std::unique_ptr<IntData> intData1 = _consumer1->getData();
 			int i1 = intData1->getInt();
-			_producer1->getBuffer()->recycle(std::move(intData1));
+			_consumer1->recycleData(std::move(intData1));
 
-			std::unique_ptr<IntData> intData2 = static_unique_ptr_cast<IntData, IData>(_producer2->getBuffer()->get());
+			std::unique_ptr<IntData> intData2 = _consumer2->getData();
 			int i2 = intData2->getInt();
-			_producer2->getBuffer()->recycle(std::move(intData2));
+			_consumer2->recycleData(std::move(intData2));
 
-			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, IData>(_buffer->deque());
+			std::unique_ptr<IntData> intData = _buffer->deque();
 			intData->setInt(i1 + i2);
 			std::cout << this << " adding " << i1 << " and " << i2 << ": " << intData->getInt() << std::endl;
 			_buffer->enque(std::move(intData));
@@ -136,13 +121,11 @@ public:
 	}
 };
 
-class IntConsumer : public IConsumer
+class IntConsumer : public IConsumer<IntData>
 {
-private:
-	std::shared_ptr<IProducer> _producer;
 public:
-	IntConsumer(std::shared_ptr<IProducer> producer)
-	: _producer(producer)
+	IntConsumer(std::shared_ptr<IProducer<IntData> > producer)
+	: IConsumer<IntData>(producer)
 	{
 	}
 
@@ -150,9 +133,9 @@ public:
 	{
 		while (true)
 		{
-			std::unique_ptr<IntData> intData = static_unique_ptr_cast<IntData, IData>(_producer->getBuffer()->get());
+			std::unique_ptr<IntData> intData = getData();
 			std::cout << this << " consumed " << intData->getInt() << std::endl;
-			_producer->getBuffer()->recycle(std::move(intData));
+			recycleData(std::move(intData));
 			std::this_thread::sleep_for(std::chrono::milliseconds(2));
 		}
 	}

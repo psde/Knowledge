@@ -5,28 +5,88 @@
 #include <mutex>
 #include <vector>
 #include <memory>
+#include <iostream>
 
 #include "IData.h"
 
+template<class T>
 class DequePool
 {
 private:
-	std::vector<std::unique_ptr<IData> > _pool;
-	std::deque<std::unique_ptr<IData> > _deque;
+	std::vector<std::unique_ptr<T> > _pool;
+	std::deque<std::unique_ptr<T> > _deque;
 	std::mutex _readMutex;
 	std::mutex _writeMutex;
 
 	size_t _maxQueueSize;
-	std::shared_ptr<IDataFactory> _factory;
 	
-	void trim();
+	void trim()
+	{
+		if (_maxQueueSize <= 0)
+			return;
+
+		while (_deque.size() > _maxQueueSize)
+		{
+			std::cout << "Too much elements, poping front" << std::endl;
+			_pool.push_back(std::move(_deque.front()));
+			_deque.pop_front();
+		}
+
+		std::cout << "Pool size: " << _pool.size() << std::endl;
+	}
 
 public:
-	DequePool(size_t maxQueueSize, std::shared_ptr<IDataFactory> factory);
+	DequePool(size_t maxQueueSize)
+	: _maxQueueSize(maxQueueSize)
+	{
 
-	void enque(std::unique_ptr<IData> data);
-	std::unique_ptr<IData> deque();
+	}
 
-	void recycle(std::unique_ptr<IData> data);
-	std::unique_ptr<IData> get();
+	void enque(std::unique_ptr<T> data)
+	{
+		std::lock_guard<std::mutex> guard(_writeMutex);
+		_deque.push_back(std::move(data));
+		trim();
+	}
+
+	std::unique_ptr<T> deque()
+	{
+		std::lock_guard<std::mutex> guard(_writeMutex);
+
+		trim();
+
+		if (_pool.size() == 0)
+		{
+			std::cout << "Too few elements in pool, creating new one" << std::endl;
+			return std::unique_ptr<T>(new T());
+		}
+
+		std::unique_ptr<T> ptr = std::move(_pool.back());
+		_pool.pop_back();
+		return ptr;
+	}
+
+	void recycle(std::unique_ptr<T> data)
+	{
+		std::lock_guard<std::mutex> guard(_writeMutex);
+		_pool.push_back(std::move(data));
+	}
+
+	std::unique_ptr<T> get()
+	{
+		std::lock_guard<std::mutex> guard(_readMutex);
+
+		while(true)
+		{
+			_writeMutex.lock();
+			if(_deque.size() > 0)
+				break;
+			_writeMutex.unlock();
+		}
+
+		auto data = std::move(_deque.front());
+		_deque.pop_front();
+		_writeMutex.unlock();
+		return std::move(data);
+	}
 };

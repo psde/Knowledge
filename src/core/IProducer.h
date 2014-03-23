@@ -2,17 +2,27 @@
 
 #include <memory>
 
-class DequePool;
+#include "DequePool.h"
 
+template<class T>
 class IProducer
 {
 protected:
-	std::shared_ptr<DequePool> _buffer;
+	std::shared_ptr<DequePool<T> > _buffer;
 
 public:
-	IProducer(unsigned int maxQueueSize, std::shared_ptr<IDataFactory> factory);
+	IProducer(unsigned int maxQueueSize)
+	: _buffer(new DequePool<T>(maxQueueSize))
+	{
+	}
 
-	std::shared_ptr<DequePool> getBuffer();
+	std::shared_ptr<DequePool<T> > getBuffer()
+	{
+		return _buffer;
+	}
 
-	virtual void run() = 0;
+	virtual void run()
+	{
+		
+	}
 };

@@ -30,9 +30,3 @@ public:
 	//Data& operator= (Data&&){}
 	virtual ~IData() { }
 };
-
-class IDataFactory
-{
-public:
-	virtual IData* createData() = 0;
-};
