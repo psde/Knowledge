@@ -13,6 +13,7 @@ include("UserDefinitions.cmake" OPTIONAL)
 
 # Include custom functions/modules?
 include("CMakeModules/FindQt5Module.cmake" REQUIRED)
+include("CMakeModules/ConfigureCopyScript.cmake" REQUIRED)
 
 # global definitions
 set(LOCAL_EXTRA_C_FLAGS "")
@@ -57,9 +58,12 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 if(WIN32)
   file(TO_NATIVE_PATH "${_OpenCV_LIB_PATH}" ENV_EXPORT_OpenCV_PATH)
+  file(TO_NATIVE_PATH "${Qt_ROOT}/qtbase/bin/" ENV_EXPORT_Qt_PATH)
   file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/lib" ENV_EXPORT_LIB_PATH)
   file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/bin" ENV_EXPORT_BIN_PATH)
 
   configure_file("${PROJECT_SOURCE_DIR}/script/env.bat.in" "${CMAKE_BINARY_DIR}/env.bat")
-  configure_file("${PROJECT_SOURCE_DIR}/script/copy_opencv_dlls.bat.in" "${CMAKE_BINARY_DIR}/copy_opencv_dlls.bat")
+
+  ConfigureCopyScript("OpenCV" "opencv" "${ENV_EXPORT_OpenCV_PATH}")
+  ConfigureCopyScript("Qt5" "qt5" "${ENV_EXPORT_Qt_PATH}")
 endif()

@@ -1,0 +1,6 @@
+function(ConfigureCopyScript name script_name path)
+	set(ENV_EXPORT_COPY_DLLS_NAME "Qt5")
+	set(ENV_EXPORT_COPY_DLLS_SRC_PATH "${path}")
+	configure_file("${PROJECT_SOURCE_DIR}/script/copy_dlls.bat.in" "${CMAKE_BINARY_DIR}/copy_${script_name}_dlls.bat")
+	message(STATUS "Configured copy script for ${name} to copy from ${path}")
+endfunction()
