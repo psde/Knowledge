@@ -1,2 +1,3 @@
 # Set opencv directory
 set(OpenCV_DIR "~/devel/opencv/")
+set(Qt_ROOT "~/devel/qt5/")

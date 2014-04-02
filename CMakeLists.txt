@@ -1,11 +1,18 @@
 project(Knowledge)
 cmake_minimum_required(VERSION 2.8)
 
+# Automatically link Qt executables to qtmain target on Windows.
+# cmake --help-policy CMP0020
+cmake_policy(SET CMP0020 NEW) 
+
 set(APPLICATION_VERSION "0.0.1")
 set(APPLICATION_NAME ${PROJECT_NAME})
 
 # User config
 include("UserDefinitions.cmake" OPTIONAL)
+
+# Include custom functions/modules?
+include("CMakeModules/FindQt5Module.cmake" REQUIRED)
 
 # global definitions
 set(LOCAL_EXTRA_C_FLAGS "")
@@ -13,6 +20,11 @@ set(LOCAL_EXTRA_C_FLAGS "")
 # OpenCV
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+
+# QT5
+set(CMAKE_AUTOMOC ON)
+FindQt5Module(Core)
+FindQt5Module(Widgets)
 
 # pthreads
 find_package(Threads)
