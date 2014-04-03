@@ -7,7 +7,8 @@
 #include <memory>
 #include <iostream>
 
-#include "IData.h"
+template<class T>
+class Producer;
 
 template<class T>
 class DequePool
@@ -17,6 +18,7 @@ private:
 	std::deque<std::unique_ptr<T> > _deque;
 	std::mutex _readMutex;
 	std::mutex _writeMutex;
+	Producer<T>* _producer;
 
 	size_t _maxQueueSize;
 	
@@ -36,8 +38,9 @@ private:
 	}
 
 public:
-	DequePool(size_t maxQueueSize)
+	DequePool(size_t maxQueueSize, Producer<T>* producer)
 	: _maxQueueSize(maxQueueSize)
+	, _producer(producer)
 	{
 
 	}
@@ -58,7 +61,7 @@ public:
 		if (_pool.size() == 0)
 		{
 			std::cout << "Too few elements in pool, creating new one" << std::endl;
-			return std::unique_ptr<T>(new T());
+			return _producer->createNew();
 		}
 
 		std::unique_ptr<T> ptr = std::move(_pool.back());
