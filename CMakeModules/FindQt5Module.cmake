@@ -1,6 +1,6 @@
 # Wtf ...
 function(FindQt5Module module)
-	if(DEFINED "${Qt_ROOT}")
+	if(DEFINED Qt_ROOT)
 		set("Qt5${module}_DIR" "${Qt_ROOT}/qtbase/lib/cmake/Qt5${module}")
 		set("Qt5${module}_DIR" "${Qt5${module}_DIR}" PARENT_SCOPE)
 	endif()
