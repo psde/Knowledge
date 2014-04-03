@@ -1,12 +1,14 @@
 set(Qt_TEST_SRCS
     main.cpp
+    MainWindow.cpp
 )
 
 set(Qt_TEST_HDRS
+    MainWindow.h
 )
 
 set(Qt_TEST_UI_FILES
-    MainWindow.ui
+    ui/MainWindow.ui
 )
 
 set(Qt_TEST_RES_FILES
