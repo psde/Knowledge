@@ -5,5 +5,18 @@ set(Qt_TEST_SRCS
 set(Qt_TEST_HDRS
 )
 
-add_executable(qt-test ${Qt_TEST_SRCS} ${Qt_TEST_HDRS})
-qt5_use_modules(qt-test Core Widgets)
+set(Qt_TEST_UI_FILES
+    MainWindow.ui
+)
+
+set(Qt_TEST_RES_FILES
+)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+QT4_WRAP_CPP(Qt_TEST_MOC_SRCS ${Qt_TEST_HDRS})
+QT4_WRAP_UI(Qt_TEST_UI_SRCS ${Qt_TEST_UI_FILES})
+QT4_ADD_RESOURCES(Qt_TEST_RESOURCE_SCRS ${Qt_TEST_RES_FILES})
+
+add_executable(qt-test ${Qt_TEST_SRCS} ${Qt_TEST_HDRS} ${Qt_TEST_MOC_SRCS} ${Qt_TEST_UI_SRCS} ${Qt_TEST_RESOURCE_SCRS})
+QT4_USE_MODULES(qt-test Core Gui)

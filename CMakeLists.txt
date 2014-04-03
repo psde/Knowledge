@@ -22,10 +22,10 @@ set(LOCAL_EXTRA_C_FLAGS "")
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-# QT5
-set(CMAKE_AUTOMOC ON)
-FindQt5Module(Core)
-FindQt5Module(Widgets)
+# Qt4
+find_package(Qt4 REQUIRED COMPONENTS QtCore QtGUI)
+include_directories(${Qt_INCLUDE_DIRS})
+add_definitions("${QT_DEFINITIONS}")
 
 # pthreads
 find_package(Threads)
