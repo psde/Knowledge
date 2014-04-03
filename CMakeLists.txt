@@ -23,6 +23,7 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Qt4
+set(CMAKE_PREFIX_PATH "${Qt_ROOT};${CMAKE_PREFIX_PATH}")
 find_package(Qt4 REQUIRED COMPONENTS QtCore QtGUI)
 include_directories(${Qt_INCLUDE_DIRS})
 add_definitions("${QT_DEFINITIONS}")
@@ -58,12 +59,12 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 if(WIN32)
   file(TO_NATIVE_PATH "${_OpenCV_LIB_PATH}" ENV_EXPORT_OpenCV_PATH)
-  file(TO_NATIVE_PATH "${Qt_ROOT}/qtbase/bin/" ENV_EXPORT_Qt_PATH)
+  file(TO_NATIVE_PATH "${Qt_ROOT}/lib/" ENV_EXPORT_Qt_PATH)
   file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/lib" ENV_EXPORT_LIB_PATH)
   file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/bin" ENV_EXPORT_BIN_PATH)
 
   configure_file("${PROJECT_SOURCE_DIR}/script/env.bat.in" "${CMAKE_BINARY_DIR}/env.bat")
 
-  ConfigureCopyScript("OpenCV" "opencv" "${ENV_EXPORT_OpenCV_PATH}")
-  ConfigureCopyScript("Qt5" "qt5" "${ENV_EXPORT_Qt_PATH}")
+  ConfigureCopyScript("OpenCV" "opencv" "*d.dll" "${ENV_EXPORT_OpenCV_PATH}")
+  ConfigureCopyScript("Qt" "qt" "*d4.dll" "${ENV_EXPORT_Qt_PATH}")
 endif()

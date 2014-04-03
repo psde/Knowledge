@@ -15,7 +15,7 @@ mkdir !BIN_DIR!\Release 1>NUL
 mkdir !LIB_DIR!\Debug 1>NUL
 mkdir !LIB_DIR!\Release 1>NUL
 
-set DEBUG_PATTERN=*d.dll
+set DEBUG_PATTERN=@ENV_EXPORT_COPY_DLLS_PATTERN@
 for /r %SRC_DIR% %%A in (*.dll) do (
     SET DLL_PATH=%%~fA
     SET DLL_NAME=%%~nA%%~xA
