@@ -26,6 +26,11 @@ protected:
 		_buffer->enque(this->produce(_buffer->deque()));
 	}
 
+	virtual void internalShutdown()
+	{
+		_buffer->shutdown();
+	}
+
 public:
 	Producer(unsigned int maxQueueSize)
 	: _buffer(new DequePool<T>(maxQueueSize, this))

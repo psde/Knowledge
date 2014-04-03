@@ -12,3 +12,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/opencv-test")
 
 # qt-test
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/qt-test")
+
+# camera-test
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/camera-test")

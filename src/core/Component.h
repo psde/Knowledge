@@ -10,6 +10,7 @@ private:
 
 protected:
 	virtual void run(){};
+	virtual void internalShutdown();
 
 public:
 	Component();

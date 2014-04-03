@@ -20,6 +20,7 @@ void Component::start()
 		std::lock_guard<std::mutex> guard(_shutdownMutex);
 		this->run();
 	}
+	internalShutdown();
 	onShutdown();
 }
 
@@ -29,6 +30,10 @@ void Component::shutdown()
 	_running = false;
 }
 
+void Component::internalShutdown()
+{
+
+}
 
 void Component::onStart()
 {

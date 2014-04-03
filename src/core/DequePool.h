@@ -10,15 +10,18 @@
 template<class T>
 class Producer;
 
+
 template<class T>
 class DequePool
 {
+
 private:
 	std::vector<std::unique_ptr<T> > _pool;
 	std::deque<std::unique_ptr<T> > _deque;
 	std::mutex _readMutex;
 	std::mutex _writeMutex;
 	Producer<T>* _producer;
+	bool _shutdown;
 
 	size_t _maxQueueSize;
 	
@@ -37,10 +40,13 @@ private:
 		std::cout << "Pool size: " << _pool.size() << std::endl;
 	}
 
+protected:
+
 public:
 	DequePool(size_t maxQueueSize, Producer<T>* producer)
 	: _maxQueueSize(maxQueueSize)
 	, _producer(producer)
+	, _shutdown(false)
 	{
 
 	}
@@ -50,6 +56,11 @@ public:
 		std::lock_guard<std::mutex> guard(_writeMutex);
 		_deque.push_back(std::move(data));
 		trim();
+	}
+
+	void shutdown()
+	{
+		_shutdown = true;
 	}
 
 	std::unique_ptr<T> deque()
@@ -79,12 +90,25 @@ public:
 	{
 		std::lock_guard<std::mutex> guard(_readMutex);
 
-		while(true)
+		bool locked = false;
+		while (_shutdown == false)
 		{
 			_writeMutex.lock();
-			if(_deque.size() > 0)
+			if (_deque.size() > 0)
+			{
+				locked = true;
 				break;
+			}
 			_writeMutex.unlock();
+		}
+
+		if (_shutdown)
+		{
+			if (locked)
+			{
+				_writeMutex.unlock();
+			}
+			return nullptr;
 		}
 
 		auto data = std::move(_deque.front());

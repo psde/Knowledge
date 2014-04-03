@@ -15,7 +15,9 @@ private:
 protected:
 	virtual void run()
 	{
-		this->consume(getData());
+		std::unique_ptr<T> data = getData();
+		if (data != nullptr)
+			this->consume(std::move(data));
 	}
 
 	std::unique_ptr<T> getData()

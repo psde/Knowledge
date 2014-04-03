@@ -12,7 +12,13 @@ protected:
 	virtual void run()
 	{
 		std::unique_ptr<TConsume> c = getData();
-		_buffer->enque(this->process(std::move(c), _buffer->deque()));
+		if (c != nullptr)
+			_buffer->enque(this->process(std::move(c), _buffer->deque()));
+	}
+
+	virtual void internalShutdown()
+	{
+		_buffer->shutdown();
 	}
 
 public:
