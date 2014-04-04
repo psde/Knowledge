@@ -48,6 +48,12 @@ public:
 	{
 	}
 
+	void onStart()
+	{}
+
+	void onShutdown()
+	{}
+
 	std::unique_ptr<IntData> produce(std::unique_ptr<IntData> data)
 	{
 		data->setInt(42);
@@ -63,6 +69,12 @@ public:
 	: ConsumerProducer(producer, maxQueueSize)
 	{
 	}
+
+	void onStart()
+	{}
+
+	void onShutdown()
+	{}
 
 	std::unique_ptr<IntData> process(std::unique_ptr<IntData> inData, std::unique_ptr<IntData> outData)
 	{
@@ -81,6 +93,12 @@ public:
 	: Consumer<IntData>(producer)
 	{
 	}
+
+	void onStart()
+	{}
+
+	void onShutdown()
+	{}
 
 	void consume(std::unique_ptr<IntData> data)
 	{

@@ -18,6 +18,9 @@ public:
 		//cv::namedWindow("ImageProcessor", 1);
 	}
 
+	void onShutdown()
+	{}
+
 	std::unique_ptr<cv::Mat> process(std::unique_ptr<cv::Mat> inData, std::unique_ptr<cv::Mat> outData)
 	{
 		cv::Mat* frame = new cv::Mat(inData->size(), inData->type());

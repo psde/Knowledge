@@ -16,10 +16,16 @@ signals:
 
 public:
 	ImageConsumer(std::shared_ptr<Producer<cv::Mat> > producer)
-		: Consumer<cv::Mat>(producer)
-		, QObject()
+	: QObject()
+	, Consumer<cv::Mat>(producer)
 	{
 	}
+
+	void onStart()
+	{}
+
+	void onShutdown()
+	{}
 
 	void consume(std::unique_ptr<cv::Mat> data)
 	{

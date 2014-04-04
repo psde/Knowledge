@@ -29,12 +29,12 @@ public:
 	{
 	}
 
-	std::unique_ptr<TProduce> produce(std::unique_ptr<TProduce> data)
+	std::unique_ptr<TProduce> produce(std::unique_ptr<TProduce> /*data*/)
 	{
 		return nullptr;
 	}
 
-	void consume(std::unique_ptr<TConsume> data)
+	void consume(std::unique_ptr<TConsume> /*data*/)
 	{
 
 	}

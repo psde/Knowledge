@@ -37,13 +37,3 @@ void Component::internalShutdown()
 {
 
 }
-
-void Component::onStart()
-{
-
-}
-
-void Component::onShutdown()
-{
-
-}

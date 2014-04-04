@@ -14,16 +14,15 @@ class Producer;
 template<class T>
 class DequePool
 {
-
 private:
 	std::vector<std::unique_ptr<T> > _pool;
 	std::deque<std::unique_ptr<T> > _deque;
 	std::mutex _readMutex;
 	std::mutex _writeMutex;
+	size_t _maxQueueSize;
 	Producer<T>* _producer;
 	bool _shutdown;
 
-	size_t _maxQueueSize;
 	
 	void trim()
 	{

@@ -27,6 +27,9 @@ public:
 			return;
 		}
 	}
+	
+	void onShutdown()
+	{}
 
 	std::unique_ptr<cv::Mat> produce(std::unique_ptr<cv::Mat> data)
 	{

@@ -19,6 +19,6 @@ public:
 	void start();
 	void shutdown();
 
-	virtual void onStart(); 
-	virtual void onShutdown();
+	virtual void onStart() = 0;
+	virtual void onShutdown() = 0;
 };
