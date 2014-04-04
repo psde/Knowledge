@@ -1,3 +1,5 @@
+#include <thread>
+
 #include "Component.h"
 
 Component::Component()
@@ -17,6 +19,7 @@ void Component::start()
 	onStart();
 	while (_running)
 	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		std::lock_guard<std::mutex> guard(_shutdownMutex);
 		this->run();
 	}

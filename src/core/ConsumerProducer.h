@@ -11,14 +11,14 @@ private:
 protected:
 	virtual void run()
 	{
-		std::unique_ptr<TConsume> c = getData();
+		std::unique_ptr<TConsume> c = this->getData();
 		if (c != nullptr)
-			_buffer->enque(this->process(std::move(c), _buffer->deque()));
+			this->_buffer->enque(this->process(std::move(c), this->_buffer->deque()));
 	}
 
 	virtual void internalShutdown()
 	{
-		_buffer->shutdown();
+		this->_buffer->shutdown();
 	}
 
 public:
