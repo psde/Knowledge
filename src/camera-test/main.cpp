@@ -1,18 +1,18 @@
 #include <QApplication>
 
 #include "CameraProducer.h"
-#include "ImageConsumerProducer.h"
+#include "ImageProcessor.h"
 
 #include "MainWindow.h"
 
 int main(int argc, char **argv)
 {
 	std::shared_ptr<CameraProducer> camProducer(new CameraProducer());
-	std::shared_ptr<ImageConsumerProducer> imageConsumerProducer(new ImageConsumerProducer(camProducer, 2));
-	std::shared_ptr<ImageConsumer> imageConsumer(new ImageConsumer(imageConsumerProducer));
+	std::shared_ptr<ImageProcessor> imageProcessor(new ImageProcessor(camProducer, 2));
+	std::shared_ptr<ImageConsumer> imageConsumer(new ImageConsumer(imageProcessor));
 
 	std::thread t0(&CameraProducer::start, camProducer);
-	std::thread t1(&ImageConsumerProducer::start, imageConsumerProducer);
+	std::thread t1(&ImageProcessor::start, imageProcessor);
 	std::thread t2(&ImageConsumer::start, imageConsumer);
 
 	QApplication app(argc, argv);
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
 	app.exec();
 
-	imageConsumerProducer->shutdown();
+	imageProcessor->shutdown();
 	camProducer->shutdown();
 	imageConsumer->shutdown();
 

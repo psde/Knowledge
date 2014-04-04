@@ -5,7 +5,7 @@ set(CAMERA_TEST_SRCS
 
 set(CAMERA_TEST_HDRS
     CameraProducer.h
-    ImageConsumerProducer.h
+    ImageProcessor.h
     ImageConsumer.h
     MainWindow.h
 )

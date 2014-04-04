@@ -5,17 +5,17 @@
 
 #include <opencv2/opencv.hpp>
 
-class ImageConsumerProducer : public ConsumerProducer<cv::Mat, cv::Mat>
+class ImageProcessor : public ConsumerProducer<cv::Mat, cv::Mat>
 {
 public:
-	ImageConsumerProducer(std::shared_ptr<Producer<cv::Mat>> producer, size_t maxQueueSize)
+	ImageProcessor(std::shared_ptr<Producer<cv::Mat>> producer, size_t maxQueueSize)
 	: ConsumerProducer(producer, maxQueueSize)
 	{
 	}
 
 	void onStart()
 	{
-		cv::namedWindow("ImageConsumerProducer", 1);
+		//cv::namedWindow("ImageProcessor", 1);
 	}
 
 	std::unique_ptr<cv::Mat> process(std::unique_ptr<cv::Mat> inData, std::unique_ptr<cv::Mat> outData)
@@ -24,8 +24,10 @@ public:
 		inData->copyTo(*frame);
 		recycleData(std::move(inData));
 
-		cv::imshow("ImageConsumerProducer", *frame);
-		cvWaitKey(1);
+		cv::putText(*frame, "Processing frame ...", cvPoint(30,30), 5, 0.8, cvScalar(200,200,200), 1, CV_AA);
+
+		//cv::imshow("ImageProcessor", *frame);
+		//cvWaitKey(1);
 
 		return std::unique_ptr<cv::Mat>(frame);
 	}
