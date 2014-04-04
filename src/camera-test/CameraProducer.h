@@ -5,6 +5,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include "NamedWindow.h"
+
 class CameraProducer : public Producer<cv::Mat>
 {
 private:
@@ -18,7 +20,6 @@ public:
 
 	void onStart()
 	{
-		//cv::namedWindow("CameraProducer", 1);
 		cap = cv::VideoCapture(0);
 
 		if (!cap.isOpened())
@@ -34,10 +35,8 @@ public:
 	std::unique_ptr<cv::Mat> produce(std::unique_ptr<cv::Mat> data)
 	{
 		cv::Mat* frame = data.release();
-		//cap.retrieve(*frame);
 		cap >> *frame;
-		//cv::imshow("CameraProducer", *frame);
-		//cvWaitKey(1);
+		NamedWindow::showNamedImage("CameraProducer", *frame);
 		return std::unique_ptr<cv::Mat>(frame);
 	}
 };

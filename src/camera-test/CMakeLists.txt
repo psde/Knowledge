@@ -8,6 +8,8 @@ set(CAMERA_TEST_HDRS
     ImageProcessor.h
     ImageConsumer.h
     MainWindow.h
+    NamedWindow.h
+    QtHelper.h
 )
 
 set(CAMERA_TEST_UI_FILES

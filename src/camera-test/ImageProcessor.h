@@ -5,6 +5,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include "NamedWindow.h"
+
 class ImageProcessor : public ConsumerProducer<cv::Mat, cv::Mat>
 {
 public:
@@ -14,9 +16,7 @@ public:
 	}
 
 	void onStart()
-	{
-		//cv::namedWindow("ImageProcessor", 1);
-	}
+	{}
 
 	void onShutdown()
 	{}
@@ -30,8 +30,7 @@ public:
 
 		cv::putText(*out, "Processing frame ...", cvPoint(30,30), 5, 0.8, cvScalar(200,200,200), 1, CV_AA);
 
-		//cv::imshow("ImageProcessor", *out);
-		//cvWaitKey(1);
+		NamedWindow::showNamedImage("ImageProcessor", *out);
 
 		return std::unique_ptr<cv::Mat>(out);
 	}
