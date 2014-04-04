@@ -23,6 +23,19 @@ public:
 
 	std::unique_ptr<cv::Mat> process(std::unique_ptr<cv::Mat> inData, std::unique_ptr<cv::Mat> outData)
 	{
+		cv::Mat *out = outData.release();
+		out->create(inData->size(), inData->type());
+		inData->copyTo(*out);
+		recycleData(std::move(inData));
+
+		cv::putText(*out, "Processing frame ...", cvPoint(30,30), 5, 0.8, cvScalar(200,200,200), 1, CV_AA);
+
+		//cv::imshow("ImageProcessor", *out);
+		//cvWaitKey(1);
+
+		return std::unique_ptr<cv::Mat>(out);		
+
+		/*
 		cv::Mat* frame = new cv::Mat(inData->size(), inData->type());
 		inData->copyTo(*frame);
 		recycleData(std::move(inData));
@@ -33,5 +46,6 @@ public:
 		//cvWaitKey(1);
 
 		return std::unique_ptr<cv::Mat>(frame);
+		*/
 	}
 };
