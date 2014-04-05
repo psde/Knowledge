@@ -1,5 +1,5 @@
 project(Knowledge)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.12)
 
 # Automatically link Qt executables to qtmain target on Windows.
 # cmake --help-policy CMP0020

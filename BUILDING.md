@@ -4,14 +4,14 @@ Building Knowledge
 Basics
 ------
 
-Knowledge uses [CMake](http://cmake.org/) to build the project. A compiler with C++11 support is needed (Visual Studio 2013 or a recent version of either gcc or clang).
+Knowledge uses [CMake](http://cmake.org/) (>=2.8.12) to build the project. A compiler with C++11 support is needed (Visual Studio 2013 or a recent version of either gcc or clang).
 
 Dependencies
 -------------
 
 Knowledge depends on several thirdparty libraries:
-* Qt >= 4.8.6 (4.8.5 can be used, but a Patch is needed for Visual Studio 2013 support)
-* OpenCV >= 2.4.8
+* Qt >=4.8.6 (4.8.5 can be used, but a Patch is needed for Visual Studio 2013 support)
+* OpenCV >=2.4.8
 
 Building Knowledge
 -------------------
