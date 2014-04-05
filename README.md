@@ -4,4 +4,8 @@ Knowledge
 Building
 ---------
 
-Knowdledge uses CMake. For detailed instructions, check [Building](Building.md).
+Knowledge uses CMake. For detailed instructions, check [Building](Building.md).
+
+Stuff
+------
+Soon.
