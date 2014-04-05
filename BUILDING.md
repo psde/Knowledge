@@ -25,6 +25,6 @@ The following steps should help you (re)build Knowledge from the command line.
 
 3. If you installed some or all dependencies in unusual places, create a `UserUserDefinitions.cmake` and set the correct paths for all dependencies. You can use the `UserUserDefinitions.cmake.example` file as a start by copying it.
 4. Create a `build` folder which cmake will use to build Knowledge
-5. Open a terminal, `cd` into the folder created in step 4 and call `cmake ..`.
+5. `cd` into the folder created in step 4 and call `cmake ..`.
 
 CMake is now building a platform-specific build system. On Windows, you can now open the Visual Studio solution file with Visual Studio 2013. On Linux/Mac OS X you can build the project with `make`.
