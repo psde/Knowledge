@@ -1,18 +1,19 @@
 
-#include "sine.h"
+//#include "sine.h"
+#include "record.h"
 #include <iostream>
 /*******************************************************************/
 int main(void);
+using namespace std;
 
-int sine(PaDeviceIndex device){
+/*int sine(PaDeviceIndex device){
 
 	PaError err;
 	Sine sine;
 
+
 	printf("PortAudio Test: output sine wave. SR = %d, BufSize = %d\n", SAMPLE_RATE, FRAMES_PER_BUFFER);
 
-	err = Pa_Initialize();
-	if (err != paNoError) goto error;
 
 	if (sine.open(device))//Pa_GetDefaultOutputDevice()))
 	{
@@ -40,10 +41,20 @@ error:
 	return err;
 
 
-}
+}*/
 
 int main(void)
 {
-	return sine(2);
+	int err = Pa_Initialize();
 
+	const PaDeviceInfo* deviceInfo;
+	Pa_GetDeviceCount();
+	for (int i = 0; i < Pa_GetDeviceCount(); i++){
+		deviceInfo = Pa_GetDeviceInfo(i);
+		cout << i << " " << deviceInfo->name << endl;
+		cout << "Eingaenge: " << deviceInfo->maxInputChannels << "  Ausgaenge: " << deviceInfo->maxOutputChannels << endl;
+	}
+	recordPlayback(1, 4);
+	//return sine(2);
+	return 0;
 }
