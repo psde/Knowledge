@@ -1,5 +1,5 @@
 #include "QtHelper.h"
-
+#include "NamedWindow.h"
 #include "MainWindow.h"
 
 MainWindow::MainWindow(ImageConsumer *consumer)
@@ -20,6 +20,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::buttonClicked()
 {
+    NamedWindow::instance()->reset();
+    QCoreApplication::exit();
     this->close();
 }
 
