@@ -5,9 +5,6 @@
 #  PORTAUDIO_INCLUDE_DIRS - the Portaudio include directory
 #  PORTAUDIO_LIBRARIES - Link these to use Portaudio
 
-include(FindPkgConfig)
-pkg_check_modules(PC_PORTAUDIO portaudio)
-
 find_path(PORTAUDIO_INCLUDE_DIRS
   NAMES
     portaudio.h
