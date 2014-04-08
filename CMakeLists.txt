@@ -1,5 +1,5 @@
 project(Knowledge)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.12)
 
 # Automatically link Qt executables to qtmain target on Windows.
 # cmake --help-policy CMP0020
@@ -64,6 +64,7 @@ if(WIN32)
   file(TO_NATIVE_PATH "${CMAKE_BINARY_DIR}/bin" ENV_EXPORT_BIN_PATH)
 
   configure_file("${PROJECT_SOURCE_DIR}/script/env.bat.in" "${CMAKE_BINARY_DIR}/env.bat")
+  configure_file("${PROJECT_SOURCE_DIR}/script/shell.bat.in" "${CMAKE_BINARY_DIR}/shell.bat")
 
   ConfigureCopyScript("OpenCV" "opencv" "*d.dll" "${ENV_EXPORT_OpenCV_PATH}")
   ConfigureCopyScript("Qt" "qt" "*d4.dll" "${ENV_EXPORT_Qt_PATH}")
