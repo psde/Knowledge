@@ -43,7 +43,7 @@
  */
 #ifndef _sine_h_
 #define _sine_h_
-#include "portAudio\include\portaudio.h"
+#include <portaudio.h>
 
 #define NUM_SECONDS   (5)
 #define SAMPLE_RATE   (44100)

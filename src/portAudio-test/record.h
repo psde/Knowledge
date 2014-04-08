@@ -1,7 +1,7 @@
 #ifndef _record_h_
 #define _record_h_
 
-#include "portAudio\include\portaudio.h"
+#include <portaudio.h>
 
 /* #define SAMPLE_RATE  (17932) // Test failure to open with this value. */
 #define SAMPLE_RATE  (44100)

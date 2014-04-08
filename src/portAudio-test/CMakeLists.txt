@@ -10,4 +10,4 @@ set(portAudio_TEST_HDRS
 )
 
 add_executable(portAudio-test ${portAudio_TEST_SRCS} ${portAudio_TEST_HDRS})
-target_link_libraries(portAudio-test portaudio_static)
+target_link_libraries(portAudio-test portaudio)

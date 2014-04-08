@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 2.8)
 set(APPLICATION_VERSION "0.0.1")
 set(APPLICATION_NAME ${PROJECT_NAME})
 
+# add module path to find specific scripts
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules/;${CMAKE_MODULE_PATH}")
+
 # User config
 include("UserDefinitions.cmake" OPTIONAL)
 
@@ -13,6 +16,10 @@ set(LOCAL_EXTRA_C_FLAGS "")
 # OpenCV
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
+
+# PortAudio
+find_package(Portaudio REQUIRED)
+include_directories(${PORTAUDIO_INCLUDE_DIRS})
 
 # pthreads
 find_package(Threads)

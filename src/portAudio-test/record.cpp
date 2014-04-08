@@ -1,7 +1,6 @@
 #include "record.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "portAudio\include\portaudio.h"
 
 /* #define SAMPLE_RATE  (17932) // Test failure to open with this value. */
 #define SAMPLE_RATE  (44100)
@@ -94,7 +93,7 @@ static int recordCallback(const void *inputBuffer, void *outputBuffer,
 ** It may be called at interrupt level on some machines so don't do anything
 ** that could mess up the system like calling malloc() or free().
 */
-static int playCallback(const void *inputBuffer, void *outputBuffer,
+int playCallback(const void *inputBuffer, void *outputBuffer,
 	unsigned long framesPerBuffer,
 	const PaStreamCallbackTimeInfo* timeInfo,
 	PaStreamCallbackFlags statusFlags,
@@ -173,7 +172,7 @@ int recordPlayback(PaDeviceIndex inputDevice, PaDeviceIndex outputDevice)
 	err = Pa_Initialize();
 	if (err != paNoError) goto done;
 
-	PaDeviceIndex test = Pa_GetDeviceCount();
+	//PaDeviceIndex test = Pa_GetDeviceCount();
 	const PaDeviceInfo *deviceInfo;
 	deviceInfo = Pa_GetDeviceInfo(2);
 	inputParameters.device = inputDevice;// Pa_GetDefaultInputDevice(); /* default input device */
