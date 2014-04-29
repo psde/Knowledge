@@ -4,14 +4,13 @@
 #include <portaudio.h>
 
 /* #define SAMPLE_RATE  (17932) // Test failure to open with this value. */
-#define SAMPLE_RATE  (44100)
-#define FRAMES_PER_BUFFER (512)
-#define NUM_SECONDS     (5)
-#define NUM_CHANNELS    (2)
+#define DEFAULT_SAMPLE_RATE  (48000)
+//#define DEFAULT_SAMPLE_RATE  (44100)
+
+
 /* #define DITHER_FLAG     (paDitherOff) */
 #define DITHER_FLAG     (0) /**/
 /** Set to 1 if you want to capture the recording to a file. */
-#define WRITE_TO_FILE   (0)
 
 /* Select sample format. */
 #if 1
@@ -40,9 +39,10 @@ typedef struct
 {
 	int          frameIndex;  /* Index into sample array. */
 	int          maxFrameIndex;
+  int          channels;
 	SAMPLE      *recordedSamples;
 }
-paTestData;
+paData;
 
 /* This routine will be called by the PortAudio engine when audio is needed.
 ** It may be called at interrupt level on some machines so don't do anything
@@ -63,8 +63,27 @@ int playCallback(const void *inputBuffer, void *outputBuffer,
 	const PaStreamCallbackTimeInfo* timeInfo,
 	PaStreamCallbackFlags statusFlags,
 	void *userData);
+
 int recordPlayback(PaDeviceIndex inputDevice, PaDeviceIndex outputDevice);
 
+class Recorder{
+private:
+    PaDeviceIndex deviceIndex;
+    const PaDeviceInfo* deviceInfo;
+    int channels;
+    double sampleRate;
+    PaStream*           stream;
+    PaError             err = paNoError;
+    paData          data;
+    int seconds;
+    
+    bool initialise();
+public:    
+    Recorder(PaDeviceIndex device);
+    bool isRecording();
+    int makeAfterRecordCalculations();
+    int record(PaTime seconds);
+};
 
 
 #endif // _record_h_
