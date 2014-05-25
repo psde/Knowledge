@@ -7,6 +7,7 @@ set(portAudio_TEST_SRCS
 set(portAudio_TEST_HDRS
 	sine.h
 	record.h
+	split.h
 )
 
 add_executable(portAudio-test ${portAudio_TEST_SRCS} ${portAudio_TEST_HDRS})

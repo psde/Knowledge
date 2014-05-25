@@ -4,9 +4,13 @@
 #include <iostream>
 #include <string.h>
 #include <vector>
+#include <stdlib.h>
+#include "split.h"
 /*******************************************************************/
 int main(void);
 using namespace std;
+
+
 
 /*int sine(PaDeviceIndex device){
 
@@ -56,28 +60,55 @@ int main(void)
       return deviceCount;
   }
   
-  cout << deviceCount << " Audiogeräte gefunden." << endl;
-	vector<int> inputDevices;
-  for (int i = 0; i < Pa_GetDeviceCount(); i++){
-		deviceInfo = Pa_GetDeviceInfo(i);
-    if (strstr(deviceInfo->name, "0x46d:0x809"))
-    {
-        inputDevices.push_back(i);
-    }
-	}
-    Recorder* recorder[inputDevices.size()];
+	cout << deviceCount << " Audiogeräte gefunden." << endl;
+	
+	vector<pair<int, const PaDeviceInfo*> > inputDevices;
+	vector<pair<int, const PaDeviceInfo*> > outputDevices;
+	for (int i = 0; i < Pa_GetDeviceCount(); i++)
 	{
-		int i = 0;
-		for(vector<int>::iterator itr = inputDevices.begin();itr != inputDevices.end() ; itr ++ , i++)
+		deviceInfo = Pa_GetDeviceInfo(i);
+		if (deviceInfo->maxInputChannels > 0)
 		{
-			deviceInfo = Pa_GetDeviceInfo(*itr);  
-			cout << *itr << " " << deviceInfo->name << endl;
-			recorder[i] = new Recorder(*itr);
+			inputDevices.push_back(pair<int, const PaDeviceInfo*>(i, deviceInfo));
+		}
+		if (deviceInfo->maxOutputChannels > 0)
+		{
+			outputDevices.push_back(pair<int, const PaDeviceInfo*>(i, deviceInfo));
 		}
 	}
-  cout << inputDevices.size() << " davon vom Typ 0x46d:0x809." << endl;
+	
+	for(int i = 0; i < inputDevices.size(); i++) 
+	{
+		cout << i << ": " << inputDevices[i].second->name << endl;
+	}
+	
+	string selcted;
+	cout << "select input devices (seperated by ,)" << endl;
+	cin >> selcted;
+	vector<string> selectedInputDevices;
+	split(selectedInputDevices, selcted, ",");
 
+	for(int i = 0; i < outputDevices.size(); i++) 
+	{
+		cout << i << ": " << outputDevices[i].second->name << endl;
+	}
 
+	
+	cout << "select output devices (seperated by ,)" << endl;
+	cin >> selcted;
+	vector<string> selectedOutputDevices;
+	split(selectedOutputDevices, selcted, ",");
+	
+	Recorder* recorder[selectedInputDevices.size()];
+	for (int i = 0; i < selectedInputDevices.size(); i++)
+	{
+		int id = atoi(selectedInputDevices[i].c_str());
+		deviceInfo = Pa_GetDeviceInfo(id);
+		cout << i << ": " << deviceInfo->name << endl;
+		recorder[i] = new Recorder(id);
+	}
+	
+	
   recorder[0]->record(5);
 
   while (recorder[0]->isRecording()) {
@@ -86,7 +117,7 @@ int main(void)
   
   recorder[0]->makeAfterRecordCalculations();
 
-  //recordPlayback(1, 4);
+    //recordPlayback(0, 4);
 	//return sine(2);
 	return err;
 }
