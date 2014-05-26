@@ -85,7 +85,7 @@ unsigned long SoundBuffer::calcValuesToRead()
 	}
 	else
 	{
-		return this->endBuffer - this->readBuffer + this->writeBuffer - this->buffer + 1;
+		return this->endBuffer - this->readBuffer + this->writeBuffer - this->buffer;
 	}
 }
 
