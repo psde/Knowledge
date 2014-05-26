@@ -11,6 +11,7 @@
 #include "defines.h"
 #define __cplusplus  201103L
 #include <mutex>
+#include "../opencv-graph/Graph.h"
 
 class SoundBuffer {
     SAMPLE* buffer;
@@ -21,11 +22,12 @@ class SoundBuffer {
     unsigned long calcValuesToWrite();
     unsigned long calcValuesToRead();
     std::mutex myMutex;
+    Graph* graph;
 public:
-    SoundBuffer(int seconds, double sampleRate);
+    SoundBuffer(int seconds, double sampleRate, Graph* graph = NULL);
     unsigned long read(SAMPLE* buffer, unsigned long numberOfSamples);
     unsigned long write(const SAMPLE* buffer, unsigned long numberOfSamples);
-    void makeCalculations(SAMPLE* max, double* average);
+    void makeCalculations(SAMPLE* min, SAMPLE* max, double* average);
     virtual ~SoundBuffer();
 private:
 

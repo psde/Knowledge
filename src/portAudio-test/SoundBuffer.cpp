@@ -6,15 +6,16 @@
  */
 
 #include "SoundBuffer.h"
-#include "record.h"
+#include <iostream>
 
-SoundBuffer::SoundBuffer(int seconds, double sampleRate)
+SoundBuffer::SoundBuffer(int seconds, double sampleRate, Graph* graph)
 {
 	this->numberOfSamples = seconds * sampleRate;
 	this->buffer = new SAMPLE[this->numberOfSamples];
 	this->endBuffer = this->buffer + this->numberOfSamples;
 	this->readBuffer = this->buffer;
 	this->writeBuffer = this->buffer;
+	this->graph = graph;
 }
 
 /*
@@ -27,7 +28,10 @@ unsigned long SoundBuffer::read(SAMPLE* buffer, unsigned long numberOfSamples)
 		numberOfSamples = this->calcValuesToRead();
 	}
 	for (int i = 0; i < numberOfSamples ; i++){
-		*buffer = *this->readBuffer;
+		if (buffer != NULL)
+		{
+			*buffer = *this->readBuffer;
+		}
 		this->readBuffer++;
 		if (this->readBuffer == this->endBuffer)
 		{
@@ -46,7 +50,12 @@ unsigned long SoundBuffer::write(const SAMPLE* buffer, unsigned long numberOfSam
 	}
 	for (int i = 0; i < numberOfSamples ; i++){
 		*this->writeBuffer = *buffer;
+		if (graph != NULL)
+		{
+			graph->updateValue((uint)(*buffer * 1000 + 128));
+		}
 		this->writeBuffer++;
+		buffer++;
 		if (this->writeBuffer == this->endBuffer)
 		{
 			this->writeBuffer = this->buffer;
@@ -79,7 +88,7 @@ unsigned long SoundBuffer::calcValuesToRead()
 	}
 }
 
-void SoundBuffer::makeCalculations(SAMPLE* max, double* average)
+void SoundBuffer::makeCalculations(SAMPLE* min, SAMPLE* max, double* average)
 {
 	unsigned long numberOfValues = this->calcValuesToRead();
 	SAMPLE* ptr = this->readBuffer;
@@ -88,6 +97,9 @@ void SoundBuffer::makeCalculations(SAMPLE* max, double* average)
 	SAMPLE value;
 	for (int i = 0; i < numberOfValues ; i++){
 		value = *ptr;
+		if (value > *max) *max = value;
+		if (value < *min) *min = value;
+		
 		if (value < 0) value = - value;
 		if (value > *max) *max = value;
 		*average += value;

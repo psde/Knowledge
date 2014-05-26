@@ -67,16 +67,14 @@ private:
     double sampleRate;
     PaStream*           stream;
     PaError             err = paNoError;
-    int seconds;
     
-    bool initialise();
     SoundBuffer* buffer;
     
 public:    
-    Recorder(PaDeviceIndex device);
+    Recorder(PaDeviceIndex device, SoundBuffer* buffer);
     bool isRecording();
-    int makeAfterRecordCalculations();
-    int record(PaTime seconds);
+    void makeAfterRecordCalculations();
+    int record();
 };
 
 

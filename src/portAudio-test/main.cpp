@@ -6,6 +6,7 @@
 #include <vector>
 #include <stdlib.h>
 #include "split.h"
+#include <opencv2/opencv.hpp>
 /*******************************************************************/
 int main(void);
 using namespace std;
@@ -100,19 +101,30 @@ int main(void)
 	split(selectedOutputDevices, selcted, ",");
 	
 	Recorder* recorder[selectedInputDevices.size()];
+	SoundBuffer* buffer[selectedInputDevices.size()];
+	Graph* graph[selectedInputDevices.size()];
 	for (int i = 0; i < selectedInputDevices.size(); i++)
 	{
 		int id = atoi(selectedInputDevices[i].c_str());
 		deviceInfo = Pa_GetDeviceInfo(id);
 		cout << i << ": " << deviceInfo->name << endl;
-		recorder[i] = new Recorder(id);
+		graph[i] = new Graph(0, 255, 1000, 200, 50000, "Image");
+		buffer[i] = new SoundBuffer(5, deviceInfo->defaultSampleRate, graph[i]);
+		recorder[i] = new Recorder(id, buffer[i]);
 	}
 	
 	
-  recorder[0]->record(5);
+  recorder[0]->record();
 
   while (recorder[0]->isRecording()) {
-        Pa_Sleep(1000);
+        Pa_Sleep(10);
+		for(uint i = 0; i <	selectedInputDevices.size(); i++)
+		{
+			graph[i]->display();
+			buffer[i]->read(NULL, 1000);
+		}
+		
+		cv::waitKey(1);
   }
   
   recorder[0]->makeAfterRecordCalculations();

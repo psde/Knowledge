@@ -24,7 +24,7 @@ static int recordCallback(const void *inputBuffer, void *outputBuffer,
 	(void) userData;
 	PaStreamCallbackResult finished;
 	
-	std::cout << timeInfo->inputBufferAdcTime << " " << framesPerBuffer <<  std::endl;
+	//std::cout << timeInfo->inputBufferAdcTime << " " << framesPerBuffer <<  std::endl;
 	if (buffer->write(rptr, framesPerBuffer) != framesPerBuffer) {
 		finished = paComplete;
 	}
@@ -221,28 +221,19 @@ done:
 	return err;
 }
  */
-Recorder::Recorder(PaDeviceIndex device)
+Recorder::Recorder(PaDeviceIndex device, SoundBuffer* buffer)
 {
 	this->deviceIndex = device;
 	this->deviceInfo = Pa_GetDeviceInfo(this->deviceIndex);
 	this->channels = this->deviceInfo->maxInputChannels;
 	this->sampleRate = DEFAULT_SAMPLE_RATE;
+	this->buffer = buffer;
 
-
-}
-
-bool Recorder::initialise()
-{
-	this->buffer = new SoundBuffer(this->seconds, this->sampleRate);
-	return true;
 }
 
 /*******************************************************************/
-int Recorder::record(PaTime seconds)
+int Recorder::record()
 {
-
-	this->seconds = seconds;
-	this->initialise();
 
 	err = Pa_Initialize();
 	if (err != paNoError) goto done;
@@ -300,14 +291,15 @@ done:
 	return err;
 }
 
-int Recorder::makeAfterRecordCalculations()
+void Recorder::makeAfterRecordCalculations()
 {
 	if (!isRecording()) {
 
-		SAMPLE max;
+		SAMPLE max, min;
 		double average;
-		this->buffer->makeCalculations(&max, &average);
+		this->buffer->makeCalculations(&min, &max, &average);
 		printf("sample max amplitude = "PRINTF_S_FORMAT"\n", max);
+		printf("sample min amplitude = "PRINTF_S_FORMAT"\n", min);
 		printf("sample average = %lf\n", average);
 
 	}
