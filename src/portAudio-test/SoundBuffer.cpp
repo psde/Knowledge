@@ -6,6 +6,7 @@
  */
 
 #include "SoundBuffer.h"
+#include "record.h"
 
 SoundBuffer::SoundBuffer(int seconds, double sampleRate)
 {
@@ -19,7 +20,7 @@ SoundBuffer::SoundBuffer(int seconds, double sampleRate)
 /*
  * buffer: stelle zum hinschreiben
  */
-int SoundBuffer::read(SAMPLE* buffer, int numberOfSamples)
+unsigned long SoundBuffer::read(SAMPLE* buffer, unsigned long numberOfSamples)
 {
 	myMutex.lock();
 	if(numberOfSamples > this->calcValuesToRead()){
@@ -37,7 +38,7 @@ int SoundBuffer::read(SAMPLE* buffer, int numberOfSamples)
 	return numberOfSamples;
 	
 }
-int SoundBuffer::write(const SAMPLE* buffer, int numberOfSamples)
+unsigned long SoundBuffer::write(const SAMPLE* buffer, unsigned long numberOfSamples)
 {
 	myMutex.lock();
 	if(numberOfSamples > this->calcValuesToWrite()){
@@ -55,7 +56,7 @@ int SoundBuffer::write(const SAMPLE* buffer, int numberOfSamples)
 	return numberOfSamples;
 }
 
-int SoundBuffer::calcValuesToWrite()
+unsigned long SoundBuffer::calcValuesToWrite()
 {
 	if (writeBuffer < readBuffer)
 	{
@@ -67,7 +68,7 @@ int SoundBuffer::calcValuesToWrite()
 	}
 }
 
-int SoundBuffer::calcValuesToRead()
+unsigned long SoundBuffer::calcValuesToRead()
 {
 	if(this->readBuffer <= this->writeBuffer) {
 		return this->writeBuffer - this->readBuffer;
@@ -78,6 +79,26 @@ int SoundBuffer::calcValuesToRead()
 	}
 }
 
+void SoundBuffer::makeCalculations(SAMPLE* max, double* average)
+{
+	unsigned long numberOfValues = this->calcValuesToRead();
+	SAMPLE* ptr = this->readBuffer;
+	*average = 0;
+	*max = 0;
+	SAMPLE value;
+	for (int i = 0; i < numberOfValues ; i++){
+		value = *ptr;
+		if (value < 0) value = - value;
+		if (value > *max) *max = value;
+		*average += value;
+		ptr++;
+		if (ptr == this->endBuffer)
+		{
+			ptr = this->buffer;
+		}
+	}
+	*average /= numberOfValues;
+}
 
 SoundBuffer::~SoundBuffer()
 {

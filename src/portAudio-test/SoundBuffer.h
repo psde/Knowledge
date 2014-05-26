@@ -17,14 +17,15 @@ class SoundBuffer {
     SAMPLE* readBuffer;
     SAMPLE* writeBuffer;
     SAMPLE* endBuffer;
-    int numberOfSamples;
-    int calcValuesToWrite();
-    int calcValuesToRead();
+    unsigned long numberOfSamples;
+    unsigned long calcValuesToWrite();
+    unsigned long calcValuesToRead();
     std::mutex myMutex;
 public:
     SoundBuffer(int seconds, double sampleRate);
-    int read(SAMPLE* buffer,  int numberOfSamples);
-    int write(const SAMPLE* buffer, int numberOfSamples);
+    unsigned long read(SAMPLE* buffer, unsigned long numberOfSamples);
+    unsigned long write(const SAMPLE* buffer, unsigned long numberOfSamples);
+    void makeCalculations(SAMPLE* max, double* average);
     virtual ~SoundBuffer();
 private:
 

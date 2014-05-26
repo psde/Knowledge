@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <portaudio.h>
 #include <iostream>
+#include "SoundBuffer.h"
 
 /* This routine will be called by the PortAudio engine when audio is needed.
  ** It may be called at interrupt level on some machines so don't do anything
@@ -14,44 +15,23 @@ static int recordCallback(const void *inputBuffer, void *outputBuffer,
 		PaStreamCallbackFlags statusFlags,
 		void *userData)
 {
-	paData *data = (paData*) userData;
+	SoundBuffer* buffer = (SoundBuffer*) userData;
 	const SAMPLE *rptr = (const SAMPLE*) inputBuffer;
-	SAMPLE *wptr = &data->recordedSamples[data->frameIndex * data->channels];
-	long framesToCalc;
-	long i;
-	int finished;
-	unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
-
+	
 	(void) outputBuffer; /* Prevent unused variable warnings. */
 	(void) timeInfo;
 	(void) statusFlags;
 	(void) userData;
-
-	std::cout << timeInfo->inputBufferAdcTime << " " << framesPerBuffer <<  std::endl;
+	PaStreamCallbackResult finished;
 	
-	if (framesLeft < framesPerBuffer) {
-		framesToCalc = framesLeft;
+	std::cout << timeInfo->inputBufferAdcTime << " " << framesPerBuffer <<  std::endl;
+	if (buffer->write(rptr, framesPerBuffer) != framesPerBuffer) {
 		finished = paComplete;
-	} else {
-		framesToCalc = framesPerBuffer;
+	}
+	else
+	{
 		finished = paContinue;
 	}
-
-	if (inputBuffer == NULL) {
-		for (i = 0; i < framesToCalc; i++) {
-			for (int j = 0; j < data->channels; j++) {
-				*wptr++ = SAMPLE_SILENCE;
-			}
-		}
-	} else {
-		for (i = 0; i < framesToCalc; i++) {
-			for (int j = 0; j < data->channels; j++) {
-				SAMPLE tmp= *rptr++;
-				*wptr++ = tmp ;
-			}
-		}
-	}
-	data->frameIndex += framesToCalc;
 	return finished;
 }
 
@@ -65,39 +45,15 @@ int playCallback(const void *inputBuffer, void *outputBuffer,
 		PaStreamCallbackFlags statusFlags,
 		void *userData)
 {
-	paData *data = (paData*) userData;
-	SAMPLE *rptr = &data->recordedSamples[data->frameIndex * data->channels];
+	SoundBuffer *buffer = (SoundBuffer*) userData;
+	PaStreamCallbackResult finished;
 	SAMPLE *wptr = (SAMPLE*) outputBuffer;
-	unsigned int i;
-	int finished;
-	unsigned int framesLeft = data->maxFrameIndex - data->frameIndex;
-
-	(void) inputBuffer; /* Prevent unused variable warnings. */
-	(void) timeInfo;
-	(void) statusFlags;
-	(void) userData;
-	
-	if (framesLeft < framesPerBuffer) {
-		/* final buffer... */
-		for (i = 0; i < framesLeft; i++) {
-			for (int j = 0; j < data->channels; j++) {
-				*wptr++ = *rptr++;
-			}
-		}
-		for (; i < framesPerBuffer; i++) {
-			for (int j = 0; j < data->channels; j++) {
-				*wptr++ = 0;
-			}
-		}
-		data->frameIndex += framesLeft;
+	if (buffer->read(wptr, framesPerBuffer)!= framesPerBuffer)
+	{
 		finished = paComplete;
-	} else {
-		for (i = 0; i < framesPerBuffer; i++) {
-			for (int j = 0; j < data->channels; j++) {
-				*wptr++ = *rptr++;
-			}
-		}
-		data->frameIndex += framesPerBuffer;
+	}
+	else
+	{
 		finished = paContinue;
 	}
 	return finished;
@@ -277,22 +233,7 @@ Recorder::Recorder(PaDeviceIndex device)
 
 bool Recorder::initialise()
 {
-	int numSamples;
-	int numBytes;
-	//data.maxFrameIndex == totalFrames (totalFrames removed) 
-	this->data.maxFrameIndex = seconds * this->sampleRate;
-	this->data.frameIndex = 0;
-	this->data.channels = this->channels;
-	numSamples = this->data.maxFrameIndex * this->data.channels;
-	numBytes = numSamples * sizeof(SAMPLE);
-	this->data.recordedSamples = (SAMPLE *) malloc(numBytes);
-	/* From now on, recordedSamples is initialised. */
-	if (this->data.recordedSamples == NULL) {
-		return false;
-	}
-	for (int i = 0; i < numSamples; i++) {
-		this->data.recordedSamples[i] = 0;
-	}
+	this->buffer = new SoundBuffer(this->seconds, this->sampleRate);
 	return true;
 }
 
@@ -308,7 +249,7 @@ int Recorder::record(PaTime seconds)
 
 	PaStreamParameters inputParameters;
 	inputParameters.device = this->deviceIndex;
-	inputParameters.channelCount = this->data.channels;
+	inputParameters.channelCount = this->channels;
 	inputParameters.sampleFormat = PA_SAMPLE_TYPE;
 	inputParameters.suggestedLatency = this->deviceInfo->defaultLowInputLatency;
 	inputParameters.hostApiSpecificStreamInfo = NULL;
@@ -323,7 +264,7 @@ int Recorder::record(PaTime seconds)
 			4800, // 0 as recommended by PortAudio
 			paClipOff, /* we won't output out of range samples so don't bother clipping them */
 			recordCallback,
-			&data);
+			buffer);
 	if (err != paNoError) goto done;
 
 	err = Pa_StartStream(this->stream);
@@ -363,25 +304,9 @@ int Recorder::makeAfterRecordCalculations()
 {
 	if (!isRecording()) {
 
-		SAMPLE max, val;
+		SAMPLE max;
 		double average;
-
-		err = Pa_CloseStream(this->stream);
-
-		/* Measure maximum peak amplitude. */
-		max = 0;
-		average = 0.0;
-		for (int i = 0; i < this->data.maxFrameIndex * this->channels; i++) {
-			val = data.recordedSamples[i];
-			if (val < 0) val = -val; /* ABS */
-			if (val > max) {
-				max = val;
-			}
-			average += val;
-		}
-
-		average = average / (double) this->data.maxFrameIndex * this->seconds;
-
+		this->buffer->makeCalculations(&max, &average);
 		printf("sample max amplitude = "PRINTF_S_FORMAT"\n", max);
 		printf("sample average = %lf\n", average);
 

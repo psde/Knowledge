@@ -3,6 +3,8 @@
 
 #include <portaudio.h>
 
+#include "SoundBuffer.h"
+
 /* #define SAMPLE_RATE  (17932) // Test failure to open with this value. */
 #define DEFAULT_SAMPLE_RATE  (48000)
 //#define DEFAULT_SAMPLE_RATE  (44100)
@@ -35,15 +37,6 @@ typedef unsigned char SAMPLE;
 #define PRINTF_S_FORMAT "%d"
 #endif
 
-typedef struct
-{
-	int          frameIndex;  /* Index into sample array. */
-	int          maxFrameIndex;
-  int          channels;
-	SAMPLE      *recordedSamples;
-}
-paData;
-
 /* This routine will be called by the PortAudio engine when audio is needed.
 ** It may be called at interrupt level on some machines so don't do anything
 ** that could mess up the system like calling malloc() or free().
@@ -74,10 +67,11 @@ private:
     double sampleRate;
     PaStream*           stream;
     PaError             err = paNoError;
-    paData          data;
     int seconds;
     
     bool initialise();
+    SoundBuffer* buffer;
+    
 public:    
     Recorder(PaDeviceIndex device);
     bool isRecording();
