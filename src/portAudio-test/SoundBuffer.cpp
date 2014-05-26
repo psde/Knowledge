@@ -33,6 +33,7 @@ unsigned long SoundBuffer::read(SAMPLE* buffer, unsigned long numberOfSamples)
 			*buffer = *this->readBuffer;
 		}
 		this->readBuffer++;
+		*buffer++;
 		if (this->readBuffer == this->endBuffer)
 		{
 			this->readBuffer = this->buffer;

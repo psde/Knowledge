@@ -108,20 +108,29 @@ int main(void)
 		int id = atoi(selectedInputDevices[i].c_str());
 		deviceInfo = Pa_GetDeviceInfo(id);
 		cout << i << ": " << deviceInfo->name << endl;
-		graph[i] = new Graph(0, 255, 1000, 200, 50000, "Image");
-		buffer[i] = new SoundBuffer(5, deviceInfo->defaultSampleRate, graph[i]);
+		graph[i] = new Graph(0, 255, 1000, 200, 1000, "Image");
+		buffer[i] = new SoundBuffer(1, deviceInfo->defaultSampleRate, NULL);
 		recorder[i] = new Recorder(id, buffer[i]);
 	}
 	
 	
   recorder[0]->record();
-
+  SAMPLE* tmp = new SAMPLE[1000];
+  SAMPLE avg; 
   while (recorder[0]->isRecording()) {
         Pa_Sleep(10);
 		for(uint i = 0; i <	selectedInputDevices.size(); i++)
 		{
+			avg = 0;
+			int max = buffer[i]->read(tmp, 500);
+			for(uint i = 0; i < max; i ++)
+			{
+				avg+= ((tmp[i] > 0) ? tmp[i] : -tmp[i] / max);
+			}
+			graph[i]->updateValue(avg * 100);
+			std::cout << max << " " << avg << endl;
 			graph[i]->display();
-			buffer[i]->read(NULL, 1000);
+			
 		}
 		
 		cv::waitKey(1);
