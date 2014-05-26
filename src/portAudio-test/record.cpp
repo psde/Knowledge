@@ -252,7 +252,7 @@ int Recorder::record()
 			&inputParameters,
 			NULL, /* &outputParameters, */
 			this->sampleRate,
-			4800, // 0 as recommended by PortAudio
+			0, // 0 as recommended by PortAudio
 			paClipOff, /* we won't output out of range samples so don't bother clipping them */
 			recordCallback,
 			buffer);
