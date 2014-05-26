@@ -33,9 +33,10 @@ Graph::Graph(int minValue,
 void Graph::display()
 {
 	ulong average = 0;
-	std::list<uint>::iterator iter = this->values.begin();
 	uint currentValueId = 0;
 	uint numberOfValusForCol;
+	this->myMutex.lock();
+	std::list<uint>::iterator iter = this->values.begin();
 	
 	for(uint col = 0; col < this->width; col++)
 	{
@@ -62,19 +63,29 @@ void Graph::display()
 			}
 		}
 	}
+	this->myMutex.unlock();
 	cv::imshow(imageName, *image);
 	
 }
 
 void Graph::updateValues(uint* values, uint numberOfValues)
 {
+	this->myMutex.lock();
 	for(uint i = 0; i < numberOfValues; i++)
 	{
-		this->updateValue(values[i]);			
+		this->updateValuePr(values[i]);			
 	}
+	this->myMutex.unlock();
 }
 
 void Graph::updateValue(uint value)
+{
+	this->myMutex.lock();
+	this->updateValuePr(value);
+	this->myMutex.unlock();
+}
+
+void Graph::updateValuePr(uint value)
 {
 	this->values.push_back(value);
 	this->values.pop_front();

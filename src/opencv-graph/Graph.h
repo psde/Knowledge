@@ -10,6 +10,7 @@
 #include <string>
 #include <list>
 #include <opencv2/opencv.hpp>
+#include <mutex>
 
 class Graph {
 public:
@@ -19,7 +20,7 @@ public:
             uint height,
             uint numberOfValues,
             std::string imageName);
-    
+    std::mutex myMutex;
     void display();
     void updateValues(uint* values, uint numberOfValues);
     void updateValue(uint value);
@@ -28,7 +29,8 @@ public:
 private:
     std::string imageName;
     std::list<uint> values;
-
+    void updateValuePr(uint value);
+    
     cv::Mat* image;
     uint numberOfValues;
     uint minValue;
