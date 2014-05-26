@@ -7,7 +7,9 @@
 #include <memory>
 #include <iostream>
 
-#include "IData.h"
+template<class T>
+class Producer;
+
 
 template<class T>
 class DequePool
@@ -17,8 +19,10 @@ private:
 	std::deque<std::unique_ptr<T> > _deque;
 	std::mutex _readMutex;
 	std::mutex _writeMutex;
-
 	size_t _maxQueueSize;
+	Producer<T>* _producer;
+	bool _shutdown;
+
 	
 	void trim()
 	{
@@ -35,9 +39,13 @@ private:
 		std::cout << "Pool size: " << _pool.size() << std::endl;
 	}
 
+protected:
+
 public:
-	DequePool(size_t maxQueueSize)
+	DequePool(size_t maxQueueSize, Producer<T>* producer)
 	: _maxQueueSize(maxQueueSize)
+	, _producer(producer)
+	, _shutdown(false)
 	{
 
 	}
@@ -49,6 +57,11 @@ public:
 		trim();
 	}
 
+	void shutdown()
+	{
+		_shutdown = true;
+	}
+
 	std::unique_ptr<T> deque()
 	{
 		std::lock_guard<std::mutex> guard(_writeMutex);
@@ -58,7 +71,7 @@ public:
 		if (_pool.size() == 0)
 		{
 			std::cout << "Too few elements in pool, creating new one" << std::endl;
-			return std::unique_ptr<T>(new T());
+			return _producer->createNew();
 		}
 
 		std::unique_ptr<T> ptr = std::move(_pool.back());
@@ -76,12 +89,25 @@ public:
 	{
 		std::lock_guard<std::mutex> guard(_readMutex);
 
-		while(true)
+		bool locked = false;
+		while (_shutdown == false)
 		{
 			_writeMutex.lock();
-			if(_deque.size() > 0)
+			if (_deque.size() > 0)
+			{
+				locked = true;
 				break;
+			}
 			_writeMutex.unlock();
+		}
+
+		if (_shutdown)
+		{
+			if (locked)
+			{
+				_writeMutex.unlock();
+			}
+			return nullptr;
 		}
 
 		auto data = std::move(_deque.front());

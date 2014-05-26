@@ -1,15 +1,13 @@
 set(CORE_SRCS
-    IData.cpp
-    IConsumer.cpp
-    IProducer.cpp
-    DequePool.cpp
+	Component.cpp
 )
 
 set(CORE_HDRS
-    IData.h
-    IConsumer.h
-    IProducer.h
     DequePool.h
+	Component.h
+    Producer.h
+    Consumer.h
+    ConsumerProducer.h
 )
 
 add_library(core ${CORE_SRCS} ${CORE_HDRS})

@@ -10,5 +10,14 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/core-test")
 # opencv-test
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/opencv-test")
 
+# opencv-graph
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/opencv-graph")
+
+# qt-test
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/qt-test")
+
+# camera-test
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/camera-test")
+
 # portAudio-test
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/portAudio-test")

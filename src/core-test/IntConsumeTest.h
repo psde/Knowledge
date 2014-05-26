@@ -1,11 +1,10 @@
 #pragma once
 
-#include <core/IData.h>
-#include <core/IProducer.h>
-#include <core/IConsumer.h>
+#include <core/Producer.h>
+#include <core/Consumer.h>
 #include <core/DequePool.h>
+#include <core/ConsumerProducer.h>
 
-// IntData
 class IntData
 {
 private:
@@ -41,102 +40,70 @@ public:
 	}
 };
 
-class Int42Producer : public IProducer<IntData>
+class Int42Producer : public Producer<IntData>
 {
 public:
 	Int42Producer()
-	: IProducer<IntData>(10)
+	: Producer<IntData>(10)
 	{
 	}
 
-	void run()
+	void onStart()
+	{}
+
+	void onShutdown()
+	{}
+
+	std::unique_ptr<IntData> produce(std::unique_ptr<IntData> data)
 	{
-		while (true)
-		{
-			std::unique_ptr<IntData> intData = _buffer->deque();
-			intData->setInt(42);
-			std::cout << this << " producing " << intData->getInt() << std::endl;
-			_buffer->enque(std::move(intData));
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		}
-	}
-};
-
-
-class MultiplyIntBy2 : public IConsumer<IntData>, public IProducer<IntData>
-{
-public:
-	MultiplyIntBy2(std::shared_ptr<IProducer<IntData> > producer)
-	: IConsumer<IntData>(producer)
-	, IProducer<IntData>(10)
-	{
-	}
-
-	void run()
-	{
-		while (true)
-		{
-			std::unique_ptr<IntData> intData = getData();
-			int i = intData->getInt();
-			recycleData(std::move(intData));
-
-			std::unique_ptr<IntData> intData2 = _buffer->deque();
-			intData2->setInt(i * 2);
-			std::cout << this << " producing multiplied " << intData2->getInt() << std::endl;
-			_buffer->enque(std::move(intData2));
-		}
+		data->setInt(42);
+		std::cout << this << " producing " << data->getInt() << std::endl;
+		return std::move(data);
 	}
 };
 
-class AddTwoInts : public IProducer<IntData>
+class MultiplyIntBy2 : public ConsumerProducer<IntData, IntData>
 {
-private:
-	std::shared_ptr<IConsumer<IntData> > _consumer1, _consumer2;
-
 public:
-	AddTwoInts(std::shared_ptr<IProducer<IntData> > producer1, std::shared_ptr<IProducer<IntData> > producer2)
-	: IProducer<IntData>(10)
-	, _consumer1(new IConsumer<IntData>(producer1))
-	, _consumer2(new IConsumer<IntData>(producer2))
+	MultiplyIntBy2(std::shared_ptr<Producer<IntData>> producer, size_t maxQueueSize)
+	: ConsumerProducer(producer, maxQueueSize)
 	{
 	}
 
-	void run()
+	void onStart()
+	{}
+
+	void onShutdown()
+	{}
+
+	std::unique_ptr<IntData> process(std::unique_ptr<IntData> inData, std::unique_ptr<IntData> outData)
 	{
-		while (true)
-		{
-			std::unique_ptr<IntData> intData1 = _consumer1->getData();
-			int i1 = intData1->getInt();
-			_consumer1->recycleData(std::move(intData1));
+		int i = inData->getInt();
+		recycleData(std::move(inData));
 
-			std::unique_ptr<IntData> intData2 = _consumer2->getData();
-			int i2 = intData2->getInt();
-			_consumer2->recycleData(std::move(intData2));
-
-			std::unique_ptr<IntData> intData = _buffer->deque();
-			intData->setInt(i1 + i2);
-			std::cout << this << " adding " << i1 << " and " << i2 << ": " << intData->getInt() << std::endl;
-			_buffer->enque(std::move(intData));
-		}
+		outData->setInt(i * 2);
+		return std::move(outData);
 	}
 };
 
-class IntConsumer : public IConsumer<IntData>
+class IntOutput : public Consumer<IntData>
 {
 public:
-	IntConsumer(std::shared_ptr<IProducer<IntData> > producer)
-	: IConsumer<IntData>(producer)
+	IntOutput(std::shared_ptr<Producer<IntData> > producer)
+	: Consumer<IntData>(producer)
 	{
 	}
 
-	void run()
+	void onStart()
+	{}
+
+	void onShutdown()
+	{}
+
+	void consume(std::unique_ptr<IntData> data)
 	{
-		while (true)
-		{
-			std::unique_ptr<IntData> intData = getData();
-			std::cout << this << " consumed " << intData->getInt() << std::endl;
-			recycleData(std::move(intData));
-			std::this_thread::sleep_for(std::chrono::milliseconds(2));
-		}
+		std::cout << this << " consumed " << data->getInt() << std::endl;
+		recycleData(std::move(data));
+		std::this_thread::sleep_for(std::chrono::milliseconds(2));
 	}
 };

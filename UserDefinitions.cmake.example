@@ -1,2 +1,5 @@
-# Set opencv directory
+# This file is used on unusual systems for setting up dependencies
+# Windows users: Don't forget to change the directory seperator to '/'
+
 set(OpenCV_DIR "~/devel/opencv/")
+set(Qt_ROOT "~/devel/qt4/")
