@@ -16,28 +16,28 @@ class Graph {
 public:
     Graph(int minValue, 
             int maxValue, 
-            uint width, 
-            uint height,
-            uint numberOfValues,
+            unsigned int width, 
+            unsigned int height,
+            unsigned int numberOfValues,
             std::string imageName);
     std::mutex myMutex;
     void display();
-    void updateValues(uint* values, uint numberOfValues);
-    void updateValue(uint value);
-    void setValueRange(uint minValue, uint maxValue);
+    void updateValues(unsigned int* values, unsigned int numberOfValues);
+    void updateValue(unsigned int value);
+    void setValueRange(unsigned int minValue, unsigned int maxValue);
     virtual ~Graph();
 private:
     std::string imageName;
-    std::list<uint> values;
-    void updateValuePr(uint value);
+    std::list<unsigned int> values;
+    void updateValuePr(unsigned int value);
     
     cv::Mat* image;
-    uint numberOfValues;
-    uint minValue;
-    uint maxValue;
+    unsigned int numberOfValues;
+    unsigned int minValue;
+    unsigned int maxValue;
     
-    uint width;
-    uint heigth;
+    unsigned int width;
+    unsigned int heigth;
     
 };
 
