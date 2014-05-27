@@ -42,7 +42,7 @@ int ImageProcessor::displayMaxima(cv::Mat* image)
   binaryImage.reshape(1);
   if (image != NULL)
   {
-    cv::threshold(*image, binaryImage, 0, UCHAR_MAX, CV_THRESH_BINARY);
+    cv::threshold(*image, binaryImage, UCHAR_MAX - 1, UCHAR_MAX, CV_THRESH_BINARY);
     vector<vector<cv::Point>> contours;
     cv::findContours(binaryImage, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     cv::drawContours(*image, contours, -1, cv::Scalar(UCHAR_MAX, 0, 0));
