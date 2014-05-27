@@ -24,7 +24,7 @@ Graph::Graph(int minValue,
 	this->image = new cv::Mat(height, width, CV_8UC1);
 	cv::namedWindow(this->imageName);
 	cv::imshow(imageName, *this->image);
-	for(uint i = 0; i < this->numberOfValues; i ++)
+	for(unsigned int i = 0; i < this->numberOfValues; i ++)
 	{
 		this->values.push_back(0);
 	}
@@ -32,13 +32,13 @@ Graph::Graph(int minValue,
 
 void Graph::display()
 {
-	ulong average = 0;
-	uint currentValueId = 0;
-	uint numberOfValusForCol;
+	unsigned long average = 0;
+	unsigned int currentValueId = 0;
+	unsigned int numberOfValusForCol;
 	this->myMutex.lock();
-	std::list<uint>::iterator iter = this->values.begin();
+	std::list<unsigned int>::iterator iter = this->values.begin();
 	
-	for(uint col = 0; col < this->width; col++)
+	for(unsigned int col = 0; col < this->width; col++)
 	{
 		average = 0;
 		numberOfValusForCol = 0;
@@ -51,7 +51,7 @@ void Graph::display()
 			currentValueId ++;
 		}	
 		average /= numberOfValusForCol;
-		for(uint row = 0; row < this->heigth; row ++)
+		for(unsigned int row = 0; row < this->heigth; row ++)
 		{
 			if(this->heigth - row < average * this->heigth / this->maxValue)
 			{
@@ -68,30 +68,30 @@ void Graph::display()
 	
 }
 
-void Graph::updateValues(uint* values, uint numberOfValues)
+void Graph::updateValues(unsigned int* values, unsigned int numberOfValues)
 {
 	this->myMutex.lock();
-	for(uint i = 0; i < numberOfValues; i++)
+	for(unsigned int i = 0; i < numberOfValues; i++)
 	{
 		this->updateValuePr(values[i]);			
 	}
 	this->myMutex.unlock();
 }
 
-void Graph::updateValue(uint value)
+void Graph::updateValue(unsigned int value)
 {
 	this->myMutex.lock();
 	this->updateValuePr(value);
 	this->myMutex.unlock();
 }
 
-void Graph::updateValuePr(uint value)
+void Graph::updateValuePr(unsigned int value)
 {
 	this->values.push_back(value);
 	this->values.pop_front();
 }
 
-void Graph::setValueRange(uint minValue, uint maxValue)
+void Graph::setValueRange(unsigned int minValue, unsigned int maxValue)
 {
 	this->minValue = minValue;
 	this->maxValue = maxValue;
