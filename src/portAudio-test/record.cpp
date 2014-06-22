@@ -25,13 +25,8 @@ static int recordCallback(const void *inputBuffer, void *outputBuffer,
 	PaStreamCallbackResult finished;
 	
 	//std::cout << timeInfo->inputBufferAdcTime << " " << framesPerBuffer <<  std::endl;
-	if (buffer->write(rptr, framesPerBuffer) != framesPerBuffer) {
-		finished = paComplete;
-	}
-	else
-	{
-		finished = paContinue;
-	}
+	finished = paContinue;
+
 	return finished;
 }
 
