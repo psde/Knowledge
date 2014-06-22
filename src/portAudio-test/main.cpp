@@ -2,6 +2,7 @@
 //#include "sine.h"
 #include "record.h"
 #include <iostream>
+#include <fstream>
 #include <string.h>
 #include <vector>
 #include <stdlib.h>
@@ -50,10 +51,33 @@ error:
 
 }*/
 
+string getDate()
+{
+	time_t Zeitstempel;
+    tm *nun;
+    Zeitstempel = time(0);
+    nun = localtime(&Zeitstempel);
+    stringstream bla;
+	bla << nun->tm_year + 1900 -2000;
+	if (nun->tm_mon + 1 < 10) bla << 0;
+	bla << nun->tm_mon + 1;
+	if (nun->tm_mday < 10) bla << 0;
+	bla << nun->tm_mday;
+	bla << "_";
+	if (nun->tm_hour < 10) bla << 0;
+	bla << nun->tm_hour;
+	if (nun->tm_min < 10) bla << 0;
+	bla << nun->tm_min;
+	if (nun->tm_sec < 10) bla << 0;
+	bla << nun->tm_sec;
+	return bla.str();
+}
+
 int main(void)
 {
 	int err = Pa_Initialize();
-
+	ofstream myfile;
+	myfile.open (getDate());
 	const PaDeviceInfo* deviceInfo;
 	int deviceCount = Pa_GetDeviceCount();
   if (deviceCount < 0) {
@@ -106,39 +130,53 @@ int main(void)
 	for (int i = 0; i < selectedInputDevices.size(); i++)
 	{
 		int id = atoi(selectedInputDevices[i].c_str());
-		deviceInfo = Pa_GetDeviceInfo(id);
-		cout << i << ": " << deviceInfo->name << endl;
-		graph[i] = new Graph(0, 255, 1000, 200, 1000, "Image");
-		buffer[i] = new SoundBuffer(1, deviceInfo->defaultSampleRate, NULL);
-		recorder[i] = new Recorder(id, buffer[i]);
+		deviceInfo = inputDevices[id].second;
+		cout << id << ": " << deviceInfo->name << endl;
+		graph[i] = new Graph(0, 400, 1000, 200, 1000, "Image");
+		buffer[i] = new SoundBuffer(5, deviceInfo->defaultSampleRate, NULL);
+		recorder[i] = new Recorder(inputDevices[id].first, buffer[i]);
 	}
 	
+	myfile << inputDevices[atoi(selectedInputDevices[0].c_str())].first << ": ";
+	myfile << inputDevices[atoi(selectedInputDevices[0].c_str())].second->name << endl;
 	
   recorder[0]->record();
   SAMPLE* tmp = new SAMPLE[1000];
   SAMPLE avg; 
+  SAMPLE bigAvg;
+  uint countForBigAvg = 100;
   while (recorder[0]->isRecording()) {
-        Pa_Sleep(10);
-		for(uint i = 0; i <	selectedInputDevices.size(); i++)
+	  bigAvg = 0;
+        for(uint i = 0; i < countForBigAvg; i ++)
 		{
-			avg = 0;
-			int max = buffer[i]->read(tmp, 500);
-			for(uint i = 0; i < max; i ++)
+			Pa_Sleep(10);
+			for(uint i = 0; i <	selectedInputDevices.size(); i++)
 			{
-				avg+= ((tmp[i] > 0) ? tmp[i] : -tmp[i] / max);
+				avg = 0;
+				int max = buffer[i]->read(tmp, 1000);
+				for(uint i = 0; i < max; i ++)
+				{
+					avg+= ((tmp[i] > 0) ? tmp[i] : -tmp[i] / max);
+				}
+				graph[i]->updateValue(avg * 100);
+				std::cout << max << " " << avg << endl;
+
+				graph[i]->display();
+
 			}
-			graph[i]->updateValue(avg * 100);
-			std::cout << max << " " << avg << endl;
-			graph[i]->display();
-			
+			bigAvg += avg;
+			cv::waitKey(1);
 		}
+		bigAvg /= countForBigAvg;
+		myfile << getDate() << ": " << bigAvg << endl;
 		
-		cv::waitKey(1);
   }
   
   recorder[0]->makeAfterRecordCalculations();
 
     //recordPlayback(0, 4);
 	//return sine(2);
+  myfile.close();
+	
 	return err;
 }
