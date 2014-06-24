@@ -103,8 +103,6 @@ int ImageProcessor::displayMaxima(cv::Mat* image, cv::Mat* binaryImage)
     cv::findContours(*binaryImage, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     this->recentContours = contours;
     cv::drawContours(*image, contours, -1, cv::Scalar(UCHAR_MAX, 0, 0));
-    this->currentMaximaImage.copyTo(this->recentMaximaImage);
-    image->copyTo(this->currentMaximaImage);
     return (int)(contours.size());
   }
   return -1;
@@ -147,9 +145,4 @@ bool ImageProcessor::storeImage(cv::Mat* image, string path)
     return cv::imwrite(path, *image, compressionParameters);
   }
   return false;
-}
-
-cv::Mat ImageProcessor::getRecentMaximaImage()
-{
-  return this->recentMaximaImage;
 }
