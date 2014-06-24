@@ -8,48 +8,11 @@
 #include <stdlib.h>
 #include "split.h"
 #include <opencv2/opencv.hpp>
+#include "../opencv-graph/Graph.h"
 /*******************************************************************/
 int main(void);
 using namespace std;
 
-
-
-/*int sine(PaDeviceIndex device){
-
-	PaError err;
-	Sine sine;
-
-
-	printf("PortAudio Test: output sine wave. SR = %d, BufSize = %d\n", SAMPLE_RATE, FRAMES_PER_BUFFER);
-
-
-	if (sine.open(device))//Pa_GetDefaultOutputDevice()))
-	{
-		if (sine.start())
-		{
-			printf("Play for %d seconds.\n", NUM_SECONDS);
-			Pa_Sleep(NUM_SECONDS * 1000);
-
-			sine.stop();
-		}
-
-		sine.close();
-	}
-
-	Pa_Terminate();
-	printf("Test finished.\n");
-
-	return err;
-
-error:
-	Pa_Terminate();
-	fprintf(stderr, "An error occured while using the portaudio stream\n");
-	fprintf(stderr, "Error number: %d\n", err);
-	fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-	return err;
-
-
-}*/
 
 string getDate()
 {
@@ -133,7 +96,7 @@ int main(void)
 		deviceInfo = inputDevices[id].second;
 		cout << id << ": " << deviceInfo->name << endl;
 		graph[i] = new Graph(0, 400, 1000, 200, 1000, "Image");
-		buffer[i] = new SoundBuffer(5, deviceInfo->defaultSampleRate, NULL);
+		buffer[i] = new SoundBuffer(5, deviceInfo->defaultSampleRate);
 		recorder[i] = new Recorder(inputDevices[id].first, buffer[i]);
 	}
 	

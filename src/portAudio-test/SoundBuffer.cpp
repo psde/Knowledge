@@ -8,14 +8,13 @@
 #include "SoundBuffer.h"
 #include <iostream>
 
-SoundBuffer::SoundBuffer(int seconds, double sampleRate, Graph* graph)
+SoundBuffer::SoundBuffer(int seconds, double sampleRate)
 {
 	this->numberOfSamples = seconds * sampleRate;
 	this->buffer = new SAMPLE[this->numberOfSamples];
 	this->endBuffer = this->buffer + this->numberOfSamples;
 	this->readBuffer = this->buffer;
 	this->writeBuffer = this->buffer;
-	this->graph = graph;
 }
 
 /*
@@ -51,10 +50,6 @@ unsigned long SoundBuffer::write(const SAMPLE* buffer, unsigned long numberOfSam
 	}
 	for (int i = 0; i < numberOfSamples ; i++){
 		*this->writeBuffer = *buffer;
-		if (graph != NULL)
-		{
-			graph->updateValue((uint)(*buffer * 1000 + 128));
-		}
 		this->writeBuffer++;
 		buffer++;
 		if (this->writeBuffer == this->endBuffer)
