@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <opencv2/opencv.hpp>
+#include <opencv2/gpu/gpu.hpp>
 #include <string>
 #include "ImageProcessor.h"
 #include "../opencv-graph/Graph.h"
@@ -10,7 +11,7 @@ int main(int /*argc*/, char** /*argv*/)
 {       
     cv::VideoCapture videoCapture(0);
     ImageProcessor imageProcessor = ImageProcessor();
-    Graph* graph = new Graph(0, UCHAR_MAX, 500, UCHAR_MAX, 500, "Graph");
+    Graph* graph = new Graph(0, 50, 500, 300, 500, "Graph");
 
     if (!videoCapture.isOpened())
     {
@@ -41,12 +42,15 @@ int main(int /*argc*/, char** /*argv*/)
   bool stop = false;
   while(!stop)
     {
-        videoCapture >> *frame2;
+    videoCapture >> *frame2;
+    cv::imshow("Camera", *frame2);
         difference->create(frame->rows, frame->cols, frame->type());
         if (imageProcessor.calculateDifference(frame, frame2, difference))
         {
           if (imageProcessor.getGreyImage(difference))
           {
+            cv::medianBlur(*difference, *difference, 5);
+            cv::imshow("Difference", *difference);
             if (imageProcessor.displayMaxima(difference) > -1)
             {
               int activity = imageProcessor.getActivity(difference);
@@ -56,7 +60,12 @@ int main(int /*argc*/, char** /*argv*/)
                 graph->updateValue(activity);
                 graph->display();
               }
-              cv::imshow("Camera", *difference);
+              cv::imshow("Maxima", *difference);
+
+              if (imageProcessor.calculateMoves(&(imageProcessor.getRecentMaximaImage()), difference, frame2))
+              {
+                cv::imshow("Optical Flow", *frame2);
+              }
             }
           }
         }
