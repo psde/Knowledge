@@ -53,7 +53,7 @@ int main(int /*argc*/, char** /*argv*/)
           {
             cv::medianBlur(*difference, *difference, 5);
             cv::imshow("Difference", *difference);
-            imageProcessor.calcBinary(difference, binary);
+            imageProcessor.calculateBinary(difference, binary);
             cv::imshow("Binary", *binary);
             if (imageProcessor.displayMaxima(difference, binary) > -1)
             {
