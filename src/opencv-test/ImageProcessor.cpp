@@ -58,20 +58,16 @@ bool ImageProcessor::calculateMoves(cv::Mat* image1, cv::Mat* image2, cv::Mat* r
     cv::calcOpticalFlowPyrLK(*image1, *image2, previousPoints, nextPoints, status, errors);
     vector<cv::Point2f, allocator<cv::Point2f>>::const_iterator previousPoint = previousPoints.begin();
     vector<cv::Point2f, allocator<cv::Point2f>>::const_iterator nextPoint = nextPoints.begin();
-    vector<unsigned char, allocator<unsigned char>>::const_iterator currentStatus = status.begin();
     while (previousPoint != previousPoints.end())
     {
-      if (nextPoint == nextPoints.end() || (currentStatus == status.end()))
+      if (nextPoint == nextPoints.end())
       {
         return false;
       }
-      //if (currentStatus) TODO
-
 
       cv::line(*result, cv::Point(previousPoint->x, previousPoint->y), cv::Point(nextPoint->x, nextPoint->y), cv::Scalar(0.0, 0.0, 255.0));
       previousPoint++;
       nextPoint++;
-      currentStatus++;
 
       return true;
     }
@@ -94,9 +90,9 @@ void ImageProcessor::copyVectorOfVectorsIntoVector(vector<vector<cv::Point>>* ve
   }
 }
 
-void ImageProcessor::calcBinary(cv::Mat* image, cv::Mat* result)
+void ImageProcessor::calculateBinary(cv::Mat* image, cv::Mat* result)
 {
-  cv::threshold(*image, *result, UCHAR_MAX / 5, UCHAR_MAX, CV_THRESH_BINARY);
+  cv::threshold(*image, *result, 25, UCHAR_MAX, CV_THRESH_BINARY);
 }
 
 int ImageProcessor::displayMaxima(cv::Mat* image, cv::Mat* binaryImage)
@@ -128,9 +124,18 @@ int ImageProcessor::getActivity(cv::Mat* image)
 {
   if (image->channels() == 1)
   {
-    cv::Scalar meanValue;
-    meanValue = cv::mean(*image);
-    return meanValue[0];
+    int counter = 0;
+    uchar* source = image->ptr();
+    uchar* end = source +  image->rows * image->cols * image->channels();
+    while (source < end)
+    {
+      if (*source > 10)
+      {
+        counter++;
+      }
+      source++;
+    }
+    return counter;
   }
   return -1;
 }

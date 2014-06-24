@@ -11,7 +11,7 @@ int main(int /*argc*/, char** /*argv*/)
 {       
     cv::VideoCapture videoCapture(0);
     ImageProcessor imageProcessor = ImageProcessor();
-    Graph* graph = new Graph(0, 50, 500, 300, 500, "Graph");
+    Graph* graph = new Graph(0, 500, 500, 300, 500, "Graph");
 
     if (!videoCapture.isOpened())
     {
@@ -57,7 +57,7 @@ int main(int /*argc*/, char** /*argv*/)
             cv::imshow("Binary", *binary);
             if (imageProcessor.displayMaxima(difference, binary) > -1)
             {
-              int activity = imageProcessor.getActivity(difference);
+              int activity = imageProcessor.getActivity(binary);
               cout << activity << endl;
               if (activity >= 0)
               {
@@ -66,7 +66,7 @@ int main(int /*argc*/, char** /*argv*/)
               }
               cv::imshow("Maxima", *difference);
 
-              if (imageProcessor.calculateMoves(&(imageProcessor.getRecentMaximaImage()), difference, frame2))
+              if (imageProcessor.calculateMoves(frame, frame2, frame2))
               {
                 cv::imshow("Optical Flow", *frame2);
               }
