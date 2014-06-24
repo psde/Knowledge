@@ -94,16 +94,17 @@ void ImageProcessor::copyVectorOfVectorsIntoVector(vector<vector<cv::Point>>* ve
   }
 }
 
-int ImageProcessor::displayMaxima(cv::Mat* image)
+void ImageProcessor::calcBinary(cv::Mat* image, cv::Mat* result)
 {
-  cv::Mat binaryImage;
-  binaryImage.reshape(1);
-  if (image != NULL)
+  cv::threshold(*image, *result, UCHAR_MAX / 5, UCHAR_MAX, CV_THRESH_BINARY);
+}
+
+int ImageProcessor::displayMaxima(cv::Mat* image, cv::Mat* binaryImage)
+{
+  if (image != NULL && binaryImage != NULL)
   {
-    cv::threshold(*image, binaryImage, UCHAR_MAX / 5, UCHAR_MAX, CV_THRESH_BINARY);
     vector<vector<cv::Point>> contours;
-    cv::imshow("Binary", binaryImage);
-    cv::findContours(binaryImage, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+    cv::findContours(*binaryImage, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
     this->recentContours = contours;
     cv::drawContours(*image, contours, -1, cv::Scalar(UCHAR_MAX, 0, 0));
     this->currentMaximaImage.copyTo(this->recentMaximaImage);

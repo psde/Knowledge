@@ -33,6 +33,8 @@ int main(int /*argc*/, char** /*argv*/)
   frame2 = new cv::Mat();
   cv::Mat* difference;
   difference = new cv::Mat();
+  cv::Mat* binary;
+  binary = new cv::Mat();
   int counter = 1;
   string path;
   string path1 = "..\\..\\..\\src\\opencv-test\\Images\\";
@@ -51,7 +53,9 @@ int main(int /*argc*/, char** /*argv*/)
           {
             cv::medianBlur(*difference, *difference, 5);
             cv::imshow("Difference", *difference);
-            if (imageProcessor.displayMaxima(difference) > -1)
+            imageProcessor.calcBinary(difference, binary);
+            cv::imshow("Binary", *binary);
+            if (imageProcessor.displayMaxima(difference, binary) > -1)
             {
               int activity = imageProcessor.getActivity(difference);
               cout << activity << endl;
